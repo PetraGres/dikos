@@ -73,3 +73,33 @@ test('ics připomínka má celodenní událost na zadané datum', () => {
   assert.match(ics, /DTEND;VALUE=DATE:20261029/);
   assert.match(ics, /DESCRIPTION:text\\, se středníkem\\; a čárkou/);
 });
+
+test('rychlý časovač nabízí jen časy uvedené v databázi pro zvolenou lampu', async () => {
+  const { quickTimerOptions } = await import('../logic.js');
+  const led = quickTimerOptions(db, 'led');
+  const ledIds = led.map((o) => o.product.id).sort();
+  // LED čas mají: Base Elastic, Ultra Strong Fiber, Polygel (rozsah)
+  assert.deepEqual(ledIds, ['EI-01-E010', 'NA-02-13', 'NA-22-01']);
+  assert.ok(led.every((o) => o.curing.kind !== 'missing'));
+
+  const uvled = quickTimerOptions(db, 'uv_led');
+  const nfg = uvled.filter((o) => o.product.id === 'NFG-02').map((o) => o.curing.seconds);
+  assert.deepEqual(nfg, [30, 90]); // podle kroků z databáze, ne 90 pro všechno
+  assert.ok(!uvled.some((o) => o.product.id === 'NA-02-14')); // No Wipe top čas nemá
+  for (const o of uvled) {
+    const raw = o.product.steps
+      ? o.product.steps.map((s) => s.curing_seconds)
+      : [o.product.curing.uv_led_seconds];
+    const shown = o.curing.kind === 'range' ? `${o.curing.min}-${o.curing.max}` : o.curing.seconds;
+    assert.ok(raw.includes(shown), `${o.label}: ${shown} není v databázi`);
+  }
+});
+
+test('vlastní čas přijme jen celé sekundy 1–600', async () => {
+  const { parseCustomSeconds } = await import('../logic.js');
+  assert.equal(parseCustomSeconds('45'), 45);
+  assert.equal(parseCustomSeconds(''), null);
+  assert.equal(parseCustomSeconds('0'), null);
+  assert.equal(parseCustomSeconds('601'), null);
+  assert.equal(parseCustomSeconds('12.5'), null);
+});

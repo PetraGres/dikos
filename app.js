@@ -1,5 +1,8 @@
 import { CONFIG } from './config.js';
-import { FLOW_QUESTIONS, buildPlans, formatCuring, addDays, buildIcs } from './logic.js';
+import {
+  FLOW_QUESTIONS, buildPlans, formatCuring, addDays, buildIcs,
+  quickTimerOptions, parseCustomSeconds, CUSTOM_TIME_MAX,
+} from './logic.js';
 
 const app = document.getElementById('app');
 const backBtn = document.getElementById('back');
@@ -86,6 +89,7 @@ function homeView() {
     el('h1', {}, 'Co dnes budeš dělat?'),
     el('p', { class: 'muted' }, 'Provedu tě krok za krokem a pohlídám čas pod lampou.'),
     reminderCard(),
+    el('button', { class: 'btn block ghost', onclick: () => go({ view: 'quick' }) }, '⏱ Rychlý časovač'),
     el('div', { class: 'choices' },
       db.app_flows.map((f) => el('button', {
         class: 'choice',
@@ -147,6 +151,28 @@ function plansView({ plans, lamp }) {
   );
 }
 
+// Vlastní čas – zákaznice si ho zadá sama (např. podle návodu svého produktu).
+function customTimeControl(label, buttonText = '▶ Spustit vlastní čas') {
+  const input = el('input', {
+    type: 'number', min: '1', max: String(CUSTOM_TIME_MAX), step: '1',
+    inputmode: 'numeric', placeholder: 's', 'aria-label': 'Čas v sekundách',
+  });
+  const start = () => {
+    const s = parseCustomSeconds(input.value);
+    if (s) startTimer(s, label);
+    else input.focus();
+  };
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') start(); });
+  return el('div', { class: 'manual' }, input, el('button', { class: 'btn small ghost', onclick: start }, buttonText));
+}
+
+function otherTime(label) {
+  return el('details', { class: 'other-time' },
+    el('summary', {}, 'Jiný čas'),
+    el('p', { class: 'muted' }, 'Uvedený čas je z produktové stránky. Pokud tvůj návod uvádí jiný, zadej ho sem.'),
+    customTimeControl(label));
+}
+
 function curingControls(step, lamp) {
   const c = step.curing;
   if (!c) return null;
@@ -155,24 +181,51 @@ function curingControls(step, lamp) {
   }
   if (c.kind === 'fixed') {
     return el('div', { class: 'row' },
-      el('button', { class: 'btn small', onclick: () => startTimer(c.seconds, step.name) }, `▶ Vytvrdit ${c.seconds} s`));
+      el('button', { class: 'btn small', onclick: () => startTimer(c.seconds, step.name) }, `▶ Vytvrdit ${c.seconds} s`),
+      otherTime(step.name));
   }
   if (c.kind === 'range') {
     return el('div', {},
       el('p', { class: 'muted' }, `Výrobce uvádí ${formatCuring(c)} podle lampy a tloušťky vrstvy. Zvol čas:`),
       el('div', { class: 'row' },
-        [c.min, c.max].map((s) => el('button', { class: 'btn small ghost', onclick: () => startTimer(s, step.name) }, `▶ ${s} s`))));
+        [c.min, c.max].map((s) => el('button', { class: 'btn small ghost', onclick: () => startTimer(s, step.name) }, `▶ ${s} s`))),
+      otherTime(step.name));
   }
   // čas neuveden – vlastní čas z návodu produktu
-  const input = el('input', { type: 'number', min: '1', max: '600', inputmode: 'numeric', placeholder: 's', 'aria-label': 'Čas v sekundách' });
   return el('div', {},
     el('p', { class: 'warn' }, 'Čas vytvrzení u tohoto produktu nemáme ověřený. Řiď se návodem konkrétního produktu.'),
-    el('div', { class: 'manual' },
-      input,
-      el('button', {
-        class: 'btn small ghost',
-        onclick: () => { const s = Number(input.value); if (s > 0 && s <= 600) startTimer(s, step.name); else input.focus(); },
-      }, '▶ Spustit čas z návodu')),
+    customTimeControl(step.name, '▶ Spustit čas z návodu'));
+}
+
+const LAMP_LABELS = { uv_led: 'UV/LED', led: 'LED', uv: 'UV' };
+
+function quickView() {
+  let lamp = 'uv_led';
+  const list = el('div', {});
+  const lampRow = el('div', { class: 'segmented', role: 'group', 'aria-label': 'Typ lampy' });
+  const draw = () => {
+    lampRow.replaceChildren(...Object.entries(LAMP_LABELS).map(([value, label]) =>
+      el('button', { class: value === lamp ? 'active' : '', 'aria-pressed': String(value === lamp), onclick: () => { lamp = value; draw(); } }, label)));
+    const options = quickTimerOptions(db, lamp);
+    list.replaceChildren(
+      options.length
+        ? el('div', { class: 'card quick-list' }, options.map((o) => el('div', { class: 'quick-item' },
+          el('span', {}, o.label),
+          el('div', { class: 'row' },
+            (o.curing.kind === 'range' ? [o.curing.min, o.curing.max] : [o.curing.seconds]).map((s) =>
+              el('button', { class: 'btn small', onclick: () => startTimer(s, o.label) }, `${s} s`))))))
+        : el('p', { class: 'warn' }, 'Pro tuto lampu nemáme u žádného produktu uvedený čas.'),
+    );
+  };
+  draw();
+  return el('div', {},
+    el('h1', {}, 'Rychlý časovač'),
+    el('p', { class: 'muted' }, 'Časy z produktových stránek Dikos podle typu lampy. Produkty bez uvedeného času tu nejsou – u nich se řiď návodem.'),
+    lampRow,
+    list,
+    el('h2', {}, 'Vlastní čas'),
+    el('p', { class: 'muted' }, 'Pro produkt, který tu není, zadej čas z jeho návodu.'),
+    customTimeControl('Vlastní čas'),
   );
 }
 
@@ -231,6 +284,7 @@ const VIEWS = {
   plans: plansView,
   steps: stepsView,
   done: doneView,
+  quick: quickView,
 };
 
 // --- časovač ---

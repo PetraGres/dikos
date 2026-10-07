@@ -13,6 +13,12 @@ Funguje i offline.
    - Když je čas uvedený jako rozsah (např. 60–120 s), aplikace ukáže obě hodnoty a vybere zákaznice.
    - Když čas chybí, aplikace zobrazí upozornění „řiď se návodem produktu“ a nabídne
      ruční zadání času z návodu.
+   - Pod každým časem je volba **„Jiný čas“** – zákaznice si může zadat vlastní čas (1–600 s),
+     např. podle návodu ke své lampě. Výchozí je vždy čas z databáze.
+   - **Rychlý časovač** na úvodní obrazovce: zákaznice zvolí lampu a vidí jen produkty,
+     které mají pro tu lampu v databázi uvedený čas (u Gummy Base a Nylon Fiber po krocích).
+     Seznam se tvoří z `data/dikos_nail_guide.json` automaticky – doplněný čas se v něm
+     objeví sám. Dole je pole pro vlastní čas.
 3. **Připomínka další manikúry.** Po dokončení si zákaznice uloží připomínku do kalendáře
    (za 21 dní). Na úvodní obrazovce pak vidí odpočet a tlačítko „Doplnit zásoby“,
    v posledních dnech i slevový kód.

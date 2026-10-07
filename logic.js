@@ -288,3 +288,28 @@ export function buildIcs(date, title, description) {
     'END:VCALENDAR',
   ].join('\r\n');
 }
+
+export const CUSTOM_TIME_MAX = 600;
+
+export function parseCustomSeconds(value) {
+  const s = Number(value);
+  return Number.isInteger(s) && s >= 1 && s <= CUSTOM_TIME_MAX ? s : null;
+}
+
+// Rychlý časovač: produkty, které mají pro danou lampu v databázi uvedený čas.
+// Produkt s krokovými časy (product.steps) se pro UV/LED rozepíše po krocích.
+export function quickTimerOptions(db, lamp) {
+  const options = [];
+  for (const product of db.products) {
+    if (product.steps && lamp === STEP_TIMES_LAMP) {
+      for (const step of product.steps) {
+        const curing = stepCuring(product, step, lamp);
+        if (curing && curing.kind !== 'missing') options.push({ product, label: `${product.name} – ${step.name}`, curing });
+      }
+      continue;
+    }
+    const curing = productCuring(product, lamp);
+    if (curing.kind !== 'missing') options.push({ product, label: product.name, curing });
+  }
+  return options;
+}
