@@ -1,0 +1,457 @@
+{
+  "schema_version": "1.0",
+  "name": "Dikos Kosmetika – průvodce nehty",
+  "description": "Databáze aplikačních systémů, kroků, vytvrzování a doporučených produktů pro použití v mobilní aplikaci Dikos.",
+  "source": {
+    "website": "https://www.dikos-kosmetika.cz/",
+    "checked": "2026-10-07",
+    "note": "Časy vytvrzení jsou převzaty z produktových stránek Dikos. Pokud Dikos u produktu čas neuvádí, hodnota je null a aplikace nemá čas dopočítávat z výkonu lampy."
+  },
+  "rules": {
+    "curing_time_unit": "seconds",
+    "never_infer_time_from_wattage": true,
+    "show_source_link_in_admin": true,
+    "if_time_missing": "Zobrazit uživateli upozornění, že je nutné řídit se návodem konkrétního produktu.",
+    "do_not_claim_unverified_compatibility": true
+  },
+  "categories": [
+    {
+      "id": "gel_lak",
+      "name": "Gel lak na přírodní nehty"
+    },
+    {
+      "id": "zpevneni",
+      "name": "Zpevnění přírodního nehtu"
+    },
+    {
+      "id": "modelaz",
+      "name": "Modeláž / builder gel"
+    },
+    {
+      "id": "polygel",
+      "name": "Polygel"
+    },
+    {
+      "id": "top",
+      "name": "TOP / zakončení"
+    },
+    {
+      "id": "prep",
+      "name": "Příprava nehtu"
+    },
+    {
+      "id": "removal",
+      "name": "Odstranění"
+    }
+  ],
+  "lamp_types": [
+    {
+      "id": "uv",
+      "name": "UV lampa"
+    },
+    {
+      "id": "led",
+      "name": "LED lampa"
+    },
+    {
+      "id": "uv_led",
+      "name": "UV/LED lampa"
+    }
+  ],
+  "products": [
+    {
+      "id": "NA-02-13",
+      "name": "Nailee Base Build Up Elastic 5g",
+      "brand": "Nailee",
+      "category": "zpevneni",
+      "role": "base",
+      "use_cases": [
+        "tenké a lámavé nehty",
+        "podklad pod gel lak"
+      ],
+      "curing": {
+        "uv_seconds": 120,
+        "led_seconds": 30,
+        "uv_led_seconds": 30
+      },
+      "wiping": "unknown",
+      "top_required": true,
+      "source": "https://www.dikos-kosmetika.cz/gely-na-gelove-nehty/"
+    },
+    {
+      "id": "NA-02-16",
+      "name": "Nailee Rubber Base gel 5g",
+      "brand": "Nailee",
+      "category": "zpevneni",
+      "role": "base",
+      "use_cases": [
+        "tenké a lámavé nehty",
+        "podklad pod gel lak",
+        "lehké zpevnění"
+      ],
+      "curing": {
+        "uv_seconds": null,
+        "led_seconds": null,
+        "uv_led_seconds": null
+      },
+      "wiping": "unknown",
+      "top_required": true,
+      "source": "https://www.dikos-kosmetika.cz/gely-na-gelove-nehty/"
+    },
+    {
+      "id": "NA-02-17",
+      "name": "Nailee Base Build Up Hard 5g",
+      "brand": "Nailee",
+      "category": "zpevneni",
+      "role": "hard_base",
+      "use_cases": [
+        "tenké a lámavé nehty",
+        "mírné prodloužení na šablony",
+        "podklad pod gel lak"
+      ],
+      "curing": {
+        "uv_seconds": null,
+        "led_seconds": null,
+        "uv_led_seconds": null
+      },
+      "wiping": "unknown",
+      "top_required": true,
+      "source": "https://www.dikos-kosmetika.cz/gely-na-gelove-nehty/"
+    },
+    {
+      "id": "EI-01-RS06",
+      "name": "Rubber System Base & Builder 11 ml – Milky White",
+      "brand": "ENII",
+      "category": "zpevneni",
+      "role": "base_builder",
+      "use_cases": [
+        "problematické nehty",
+        "zpevnění",
+        "builder"
+      ],
+      "curing": {
+        "uv_seconds": null,
+        "led_seconds": null,
+        "uv_led_seconds": null
+      },
+      "wiping": "unknown",
+      "top_required": true,
+      "source": "https://www.dikos-kosmetika.cz/modelovaci-gely/"
+    },
+    {
+      "id": "GBC-03",
+      "name": "Gummy Base Ceramic",
+      "brand": "ENII",
+      "category": "zpevneni",
+      "role": "base_builder",
+      "use_cases": [
+        "všechny typy nehtů",
+        "poškozené nehty",
+        "zpevnění",
+        "modelace"
+      ],
+      "curing": {
+        "uv_seconds": null,
+        "led_seconds": null,
+        "uv_led_seconds": 60
+      },
+      "wiping": "do_not_wipe",
+      "top_required": true,
+      "steps": [
+        {
+          "order": 1,
+          "name": "Nail Prep",
+          "curing_seconds": null
+        },
+        {
+          "order": 2,
+          "name": "Tenká vrstva Gummy Base",
+          "curing_seconds": 60
+        },
+        {
+          "order": 3,
+          "name": "Stavba nehtu",
+          "curing_seconds": 60
+        },
+        {
+          "order": 4,
+          "name": "TOP / barva",
+          "curing_seconds": 60
+        }
+      ],
+      "source": "https://www.dikos-kosmetika.cz/gummy-base-ceramic-03-light-pink-10-ml-enii/"
+    },
+    {
+      "id": "NFG-02",
+      "name": "ENII Nylon Fiber Gel 02 Clear",
+      "brand": "ENII",
+      "category": "modelaz",
+      "role": "builder",
+      "use_cases": [
+        "zpevnění",
+        "modeláž",
+        "přírodní nehty",
+        "tipy",
+        "šablony"
+      ],
+      "curing": {
+        "uv_seconds": 120,
+        "uv_led_seconds": 90,
+        "led_seconds": null
+      },
+      "lamp_requirement": "UV/LED 48W+",
+      "wiping": "wipe_if_filing",
+      "top_required": false,
+      "steps": [
+        {
+          "order": 1,
+          "name": "Příprava",
+          "curing_seconds": null
+        },
+        {
+          "order": 2,
+          "name": "Tenká podkladová vrstva",
+          "curing_seconds": 30
+        },
+        {
+          "order": 3,
+          "name": "Stavba",
+          "curing_seconds": 90
+        },
+        {
+          "order": 4,
+          "name": "Barva nebo TOP",
+          "curing_seconds": null
+        },
+        {
+          "order": 5,
+          "name": "Olej na kůžičku",
+          "curing_seconds": null
+        }
+      ],
+      "source": "https://www.dikos-kosmetika.cz/modelovaci-gely/enii-nylon-fiber-gel-02-clear-stavebni-uv-led-gel--40-ml/"
+    },
+    {
+      "id": "EI-01-E010",
+      "name": "ENII Ultra Strong Fiber Gel 10 ml",
+      "brand": "ENII",
+      "category": "modelaz",
+      "role": "one_phase_builder",
+      "use_cases": [
+        "oprava zlomeného nehtu",
+        "doplnění odrostu",
+        "modeláž",
+        "začátečníci"
+      ],
+      "curing": {
+        "uv_seconds": 120,
+        "led_seconds": 30,
+        "uv_led_seconds": null
+      },
+      "wiping": "unknown",
+      "top_required": false,
+      "source": "https://www.dikos-kosmetika.cz/modelovaci-gely/ultra-strong-fiber-pink--gel-10-ml-enii-nails/"
+    },
+    {
+      "id": "NA-22-01",
+      "name": "Nailee Polygel v tubě 30 ml Clear",
+      "brand": "Nailee",
+      "category": "polygel",
+      "role": "builder",
+      "use_cases": [
+        "tipy",
+        "šablony",
+        "přírodní nehty"
+      ],
+      "curing": {
+        "uv_seconds": 120,
+        "led_seconds": "60-120",
+        "uv_led_seconds": "60-120"
+      },
+      "wiping": "remove_with_cleaner",
+      "top_required": null,
+      "note": "Čas závisí na typu lampy a tloušťce vrstvy.",
+      "source": "https://www.dikos-kosmetika.cz/nailee-polygel-v-tube-30-ml-clear/"
+    },
+    {
+      "id": "NA-02-14",
+      "name": "Nailee Top Coat No Wipe 5g",
+      "brand": "Nailee",
+      "category": "top",
+      "role": "top",
+      "curing": {
+        "uv_seconds": null,
+        "led_seconds": null,
+        "uv_led_seconds": null
+      },
+      "wiping": "no_wipe",
+      "top_required": false,
+      "source": "https://www.dikos-kosmetika.cz/gely-na-gelove-nehty/"
+    },
+    {
+      "id": "NA-02-15",
+      "name": "Nailee Top Coat Matt 7g",
+      "brand": "Nailee",
+      "category": "top",
+      "role": "top",
+      "curing": {
+        "uv_seconds": null,
+        "led_seconds": null,
+        "uv_led_seconds": "30-45"
+      },
+      "wiping": "no_wipe",
+      "source": "https://www.dikos-kosmetika.cz/nailee-top-coat-matt-7g/"
+    },
+    {
+      "id": "EI-07-24",
+      "name": "Remover – odstraňovač gel laku 150 ml",
+      "brand": "ENII",
+      "category": "removal",
+      "role": "remover",
+      "source": "https://www.dikos-kosmetika.cz/znacka/enii-nails/strana-3/"
+    },
+    {
+      "id": "EI-15-66",
+      "name": "Nail Prep – Dezinfekční fáze 11 ml",
+      "brand": "ENII",
+      "category": "prep",
+      "role": "prep",
+      "source": "https://www.dikos-kosmetika.cz/znacka/enii-nails/strana-3/"
+    },
+    {
+      "id": "EI-HC1-100",
+      "name": "Hybrid Cleaner Diamond 100 ml",
+      "brand": "ENII",
+      "category": "prep",
+      "role": "cleaner",
+      "source": "https://www.dikos-kosmetika.cz/znacka/enii-nails/strana-3/"
+    },
+    {
+      "id": "UBP-9",
+      "name": "Ultrabond Primer 9 ml",
+      "brand": "ENII",
+      "category": "prep",
+      "role": "primer",
+      "source": "https://www.dikos-kosmetika.cz/znacka/enii-nails/strana-3/"
+    }
+  ],
+  "systems": [
+    {
+      "id": "system_nailee_gel_lak",
+      "name": "Nailee – gel lak",
+      "category": "gel_lak",
+      "recommended_flow": [
+        "prep",
+        "Nailee Base Build Up Elastic",
+        "Nailee Color",
+        "Nailee Color – 2. vrstva podle krytí",
+        "Nailee Top Coat No Wipe"
+      ],
+      "curing_rule": "Pro konkrétní produkt použít jeho produktový údaj; nepoužívat univerzální čas pro všechny gel laky.",
+      "note": "Barevné Nailee produkty mají v produktových návodech režimy UV 120 s / LED 30 s; ověřit vždy konkrétní produkt před publikací."
+    },
+    {
+      "id": "system_enii_gummy",
+      "name": "ENII Gummy Base Ceramic",
+      "category": "zpevneni",
+      "recommended_flow": [
+        "Nail Prep",
+        "tenká vrstva Gummy Base – 60 s",
+        "stavba Gummy Base – 60 s",
+        "barva nebo DRY TOP / DRY MATT – 60 s",
+        "olej"
+      ],
+      "curing": {
+        "uv_led_seconds": 60
+      },
+      "note": "Výpotek po vytvrzení nestírat, pokud není potřeba pilovat."
+    },
+    {
+      "id": "system_nylon_fiber",
+      "name": "ENII Nylon Fiber Gel",
+      "category": "modelaz",
+      "recommended_flow": [
+        "dezinfekce",
+        "úprava kůžičky a jemné zdrsnění",
+        "odmaštění",
+        "tenká podkladová vrstva – 30 s",
+        "stavba – 90 s",
+        "barva nebo TOP",
+        "olej"
+      ],
+      "curing": {
+        "uv_led_seconds": 90,
+        "uv_seconds": "120-240"
+      },
+      "lamp_requirement": "UV/LED 48W+"
+    },
+    {
+      "id": "system_polygel_nailee",
+      "name": "Nailee Polygel",
+      "category": "polygel",
+      "recommended_flow": [
+        "příprava nehtu",
+        "Polygel",
+        "vytvrzení",
+        "odstranění výpotku cleanerem",
+        "tvarování / dokončení"
+      ],
+      "curing": {
+        "uv_seconds": 120,
+        "led_seconds": "60-120",
+        "uv_led_seconds": "60-120"
+      },
+      "note": "Čas závisí na typu lampy a tloušťce vrstvy."
+    }
+  ],
+  "app_flows": [
+    {
+      "id": "flow_gel_lak",
+      "title": "Chci gel lak",
+      "questions": [
+        "typ nehtu",
+        "lampa",
+        "preferovaný systém",
+        "barva"
+      ],
+      "result": "personalized_application_steps"
+    },
+    {
+      "id": "flow_strengthening",
+      "title": "Chci zpevnit přírodní nehty",
+      "questions": [
+        "stav nehtu",
+        "délka",
+        "lampa"
+      ],
+      "result": "recommended_base_or_builder"
+    },
+    {
+      "id": "flow_modeling",
+      "title": "Chci modeláž",
+      "questions": [
+        "přírodní nehet / tip / šablona",
+        "lampa",
+        "požadovaná pevnost"
+      ],
+      "result": "recommended_builder_system"
+    },
+    {
+      "id": "flow_broken_nail",
+      "title": "Zlomil se mi nehet",
+      "questions": [
+        "rozsah poškození",
+        "lampa"
+      ],
+      "result": "recommended_repair_product"
+    }
+  ],
+  "implementation_notes": [
+    "Jednotlivé odstíny stejné řady nemají být duplicitní aplikační postupy; odkazují na system_id.",
+    "Časovač aplikace má čerpat curing_seconds z konkrétního produktu/kroku.",
+    "Pokud je čas uveden jako rozsah, aplikace má zobrazit rozsah, nevolit sama jednu hodnotu.",
+    "Pokud je údaj null, aplikace nemá vytvářet časovač na základě výkonu lampy.",
+    "Každý produkt v průvodci má mít source URL pro administraci a kontrolu aktuálnosti.",
+    "Dostupnost a cena nejsou součástí této databáze – mají se načítat dynamicky z e-shopu/API."
+  ]
+}

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nehtík – kontrola dat</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <h1>Kontrola dat</h1>
+    <p class="muted">Přehled produktů z <code>data/dikos_nail_guide.json</code>. Žlutě jsou chybějící časy vytvrzení – v aplikaci se u nich zobrazí upozornění „řiď se návodem produktu“. Odkaz vede na zdrojovou stránku e-shopu.</p>
+    <div id="out"></div>
+  </main>
+  <script type="module">
+    import { productCuring, formatCuring, LAMP_KEYS } from './logic.js';
+
+    const db = await (await fetch('data/dikos_nail_guide.json')).json();
+    const out = document.getElementById('out');
+    const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const lamps = Object.keys(LAMP_KEYS);
+    const withCuring = db.products.filter((p) => p.curing);
+    const missing = withCuring.filter((p) => lamps.every((l) => productCuring(p, l).kind === 'missing'));
+
+    const cell = (p, l) => {
+      if (!p.curing) return '<td>—</td>';
+      const c = productCuring(p, l);
+      return c.kind === 'missing' ? '<td><span class="missing">chybí</span></td>' : `<td>${formatCuring(c)}</td>`;
+    };
+
+    out.innerHTML = `
+      <section class="card">
+        <strong>${db.products.length}</strong> produktů ·
+        <strong>${missing.length}</strong> bez jakéhokoli času ·
+        data ověřena ${esc(db.source?.checked)}
+      </section>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Produkt</th><th>UV</th><th>LED</th><th>UV/LED</th><th>Zdroj</th></tr></thead>
+        <tbody>${db.products.map((p) => `
+          <tr>
+            <td><strong>${esc(p.name)}</strong><br><span class="muted">${esc(p.id)} · ${esc(p.category)}</span></td>
+            ${lamps.map((l) => cell(p, l)).join('')}
+            <td><a href="${esc(p.source)}" target="_blank" rel="noopener">otevřít ↗</a></td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>
+      <h2>Systémy – poznámky</h2>
+      ${db.systems.map((s) => `<section class="card"><strong>${esc(s.name)}</strong>
+        <p class="muted">${esc(s.note || s.curing_rule || '')}</p></section>`).join('')}
+    `;
+  </script>
+</body>
+</html>

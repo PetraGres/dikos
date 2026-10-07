@@ -1,0 +1,14 @@
+{
+  "name": "Nehtík – Dikos Kosmetika",
+  "short_name": "Nehtík",
+  "description": "Domácí průvodce gelovými nehty s časovačem lampy.",
+  "lang": "cs",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fbf6f4",
+  "theme_color": "#c2577a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

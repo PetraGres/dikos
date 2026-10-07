@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Nehtík – Dikos</title>
+  <meta name="description" content="Domácí průvodce gelovými nehty od Dikos Kosmetika – postup krok za krokem s časovačem lampy.">
+  <meta name="theme-color" content="#c2577a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <button class="back" id="back" hidden aria-label="Zpět">←</button>
+    <a class="brand" href="./">Nehtík <span>by Dikos</span></a>
+  </header>
+  <main id="app" aria-live="polite"></main>
+
+  <div class="timer" id="timer" hidden role="dialog" aria-modal="true" aria-labelledby="timer-label">
+    <p class="timer-label" id="timer-label"></p>
+    <p class="timer-count" id="timer-count">0</p>
+    <p class="timer-sub">Ruka pod lampou ✋</p>
+    <button class="btn ghost" id="timer-cancel">Zrušit</button>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
