@@ -143,11 +143,20 @@ function stepsFromProduct(db, product, lamp) {
     const isPrep = /prep|příprava/i.test(s.name);
     // Barva/TOP a olej jsou jiné produkty, odkaz na hlavní produkt by mátl.
     const isOther = /olej|barva|top/i.test(s.name);
+    const curing = stepCuring(product, s, lamp);
+    // Čas u kroku barva/TOP je z návodu hlavního produktu – barva nebo top
+    // zákaznice může mít jiný čas, proto se nabídne přenastavení.
+    const colorStep = /barva|top/i.test(s.name) && curing && curing.kind !== 'missing';
     return {
       name: s.name,
-      hint: isPrep ? prepStep(db, true).hint : '',
+      hint: isPrep
+        ? prepStep(db, true).hint
+        : colorStep
+          ? `Návod ${product.name} uvádí pro tento krok ${formatCuring(curing)}. Používáš jinou barvu nebo top? Nastav čas podle jejich návodu.`
+          : '',
       product: isPrep ? byId(db, 'EI-15-66') : isOther ? null : product,
-      curing: stepCuring(product, s, lamp),
+      curing,
+      adjustable: colorStep,
     };
   });
 }
@@ -287,4 +296,58 @@ export function buildIcs(date, title, description) {
     'END:VEVENT',
     'END:VCALENDAR',
   ].join('\r\n');
+}
+
+export const CUSTOM_TIME_MAX = 600;
+
+export function parseCustomSeconds(value) {
+  const s = Number(value);
+  return Number.isInteger(s) && s >= 1 && s <= CUSTOM_TIME_MAX ? s : null;
+}
+
+// Rychlý časovač: produkty, které mají pro danou lampu v databázi uvedený čas.
+// Produkt s krokovými časy (product.steps) se pro UV/LED rozepíše po krocích.
+export function quickTimerOptions(db, lamp) {
+  const options = [];
+  for (const product of db.products) {
+    if (product.steps && lamp === STEP_TIMES_LAMP) {
+      for (const step of product.steps) {
+        const curing = stepCuring(product, step, lamp);
+        if (curing && curing.kind !== 'missing') options.push({ product, label: `${product.name} – ${step.name}`, curing });
+      }
+      continue;
+    }
+    const curing = productCuring(product, lamp);
+    if (curing.kind !== 'missing') options.push({ product, label: product.name, curing });
+  }
+  return options;
+}
+
+// Produkty z postupu (bez duplicit) – podklad pro nákupní seznam.
+export function shoppingList(plan) {
+  const seen = new Map();
+  for (const p of [plan.product, ...plan.steps.map((s) => s.product)]) {
+    if (p && p.source && !seen.has(p.id)) seen.set(p.id, p);
+  }
+  return [...seen.values()];
+}
+
+// Přidá k odkazu do e-shopu značky utm_*, aby šly návštěvy z aplikace změřit.
+// campaign říká, odkud v aplikaci odkaz vede (produkt, zasoby, kalendar…).
+export function withUtm(url, source, campaign) {
+  if (!source) return url;
+  const u = new URL(url);
+  u.searchParams.set('utm_source', source);
+  u.searchParams.set('utm_medium', 'app');
+  u.searchParams.set('utm_campaign', campaign);
+  return u.toString();
+}
+
+// Odkaz pro zákaznici: přímá adresa produktu, jinak vyhledávání na e-shopu.
+// (source je zdroj údajů pro administraci – často jen kategorie.)
+// Hledá se search_term, jinak název bez dovětku za pomlčkou – kratší dotaz najde spíš.
+export function customerLink(product, searchUrl) {
+  if (product.product_url) return product.product_url;
+  const term = product.search_term || product.name.split(' – ')[0].trim();
+  return searchUrl + encodeURIComponent(term);
 }

@@ -122,3 +122,23 @@ table { width: 100%; border-collapse: collapse; font-size: .85rem; }
 th, td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--border); vertical-align: top; }
 .missing { color: var(--warn-text); background: var(--warn-bg); border-radius: 6px; padding: 0 4px; }
 .table-wrap { overflow-x: auto; }
+
+.other-time { margin-top: 8px; font-size: .9rem; }
+.other-time summary { color: var(--accent); cursor: pointer; width: max-content; padding: 4px 0; }
+.other-time p { margin: 4px 0 0; }
+
+.segmented { display: flex; gap: 4px; padding: 4px; background: var(--accent-soft); border-radius: 999px; margin: 12px 0; }
+.segmented button {
+  flex: 1; border: 0; border-radius: 999px; padding: 10px 8px; min-height: 40px;
+  background: transparent; color: var(--text); font: inherit; font-weight: 600; cursor: pointer;
+}
+.segmented button.active { background: var(--surface); box-shadow: 0 1px 3px rgb(0 0 0 / .12); }
+.quick-list { padding: 4px 16px; }
+.quick-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.quick-item:last-child { border-bottom: 0; }
+.quick-item .row { flex-shrink: 0; }
+
+.shop-list { list-style: none; padding: 0; margin: 8px 0 16px; }
+.shop-list li { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.shop-list li:last-child { border-bottom: 0; }
+.card h2:first-child { margin-top: 0; }

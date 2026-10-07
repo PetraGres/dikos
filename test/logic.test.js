@@ -39,6 +39,16 @@ test('Gummy Base: krokové časy platí pro UV/LED, pro LED lampu chybí', () =>
   assert.ok(gummyLed.steps.filter((s) => s.curing).every((s) => s.curing.kind === 'missing'));
 });
 
+test('Gummy Base: krok TOP / barva nabízí přenastavení času', () => {
+  const res = buildPlans(db, 'flow_strengthening', { state: 'damaged', length: 'natural', lamp: 'uv_led' });
+  const steps = res.plans.find((p) => p.product.id === 'GBC-03').steps;
+  const top = steps.find((s) => s.name === 'TOP / barva');
+  assert.equal(top.curing.seconds, 60);
+  assert.equal(top.adjustable, true);
+  assert.match(top.hint, /60 s/);
+  assert.ok(steps.filter((s) => s !== top).every((s) => !s.adjustable));
+});
+
 test('modeláž na tipy nabídne Nylon Fiber i Polygel', () => {
   const res = buildPlans(db, 'flow_modeling', { base: 'tipy', lamp: 'uv_led' });
   const ids = res.plans.map((p) => p.product.id).sort();
@@ -72,4 +82,68 @@ test('ics připomínka má celodenní událost na zadané datum', () => {
   assert.match(ics, /DTSTART;VALUE=DATE:20261028/);
   assert.match(ics, /DTEND;VALUE=DATE:20261029/);
   assert.match(ics, /DESCRIPTION:text\\, se středníkem\\; a čárkou/);
+});
+
+test('rychlý časovač nabízí jen časy uvedené v databázi pro zvolenou lampu', async () => {
+  const { quickTimerOptions } = await import('../logic.js');
+  const led = quickTimerOptions(db, 'led');
+  const ledIds = led.map((o) => o.product.id).sort();
+  // LED čas mají: Base Elastic, Ultra Strong Fiber, Polygel (rozsah)
+  assert.deepEqual(ledIds, ['EI-01-E010', 'NA-02-13', 'NA-22-01']);
+  assert.ok(led.every((o) => o.curing.kind !== 'missing'));
+
+  const uvled = quickTimerOptions(db, 'uv_led');
+  const nfg = uvled.filter((o) => o.product.id === 'NFG-02').map((o) => o.curing.seconds);
+  assert.deepEqual(nfg, [30, 90]); // podle kroků z databáze, ne 90 pro všechno
+  assert.ok(!uvled.some((o) => o.product.id === 'NA-02-14')); // No Wipe top čas nemá
+  for (const o of uvled) {
+    const raw = o.product.steps
+      ? o.product.steps.map((s) => s.curing_seconds)
+      : [o.product.curing.uv_led_seconds];
+    const shown = o.curing.kind === 'range' ? `${o.curing.min}-${o.curing.max}` : o.curing.seconds;
+    assert.ok(raw.includes(shown), `${o.label}: ${shown} není v databázi`);
+  }
+});
+
+test('vlastní čas přijme jen celé sekundy 1–600', async () => {
+  const { parseCustomSeconds } = await import('../logic.js');
+  assert.equal(parseCustomSeconds('45'), 45);
+  assert.equal(parseCustomSeconds(''), null);
+  assert.equal(parseCustomSeconds('0'), null);
+  assert.equal(parseCustomSeconds('601'), null);
+  assert.equal(parseCustomSeconds('12.5'), null);
+});
+
+test('nákupní seznam: produkty z postupu bez duplicit', async () => {
+  const { shoppingList } = await import('../logic.js');
+  const res = buildPlans(db, 'flow_gel_lak', { lamp: 'led', finish: 'NA-02-14' });
+  assert.deepEqual(shoppingList(res.plans[0]).map((p) => p.id), ['NA-02-13', 'NA-02-14']);
+  const nfg = buildPlans(db, 'flow_modeling', { base: 'tipy', lamp: 'uv_led' }).plans.find((p) => p.product.id === 'NFG-02');
+  assert.deepEqual(shoppingList(nfg).map((p) => p.id), ['NFG-02', 'EI-15-66']);
+});
+
+test('měřicí značky: přidají se k odkazu a nerozbijí vyhledávání', async () => {
+  const { withUtm, customerLink } = await import('../logic.js');
+  const search = 'https://www.dikos-kosmetika.cz/vyhledavani/?string=';
+  const u = new URL(withUtm(customerLink(product('EI-15-66'), search), 'nehtik', 'produkt'));
+  assert.equal(u.searchParams.get('string'), 'Nail Prep');
+  assert.equal(u.searchParams.get('utm_source'), 'nehtik');
+  assert.equal(u.searchParams.get('utm_medium'), 'app');
+  assert.equal(u.searchParams.get('utm_campaign'), 'produkt');
+  assert.equal(withUtm('https://www.dikos-kosmetika.cz/', '', 'x'), 'https://www.dikos-kosmetika.cz/');
+});
+
+test('odkaz pro zákaznici: přímá adresa, jinak vyhledávání podle názvu', async () => {
+  const { customerLink } = await import('../logic.js');
+  const search = 'https://www.dikos-kosmetika.cz/vyhledavani/?string=';
+  assert.equal(customerLink(product('NA-22-01'), search), 'https://www.dikos-kosmetika.cz/nailee-polygel-v-tube-30-ml-clear/');
+  assert.equal(customerLink(product('NA-02-13'), search), search + 'Nailee%20Base%20Build%20Up%20Elastic%205g');
+  assert.equal(customerLink(product('EI-15-66'), search), search + 'Nail%20Prep');
+  assert.equal(customerLink({ name: 'X – Y', search_term: 'NA-18-119' }, search), search + 'NA-18-119');
+  // žádný zákaznický odkaz nesmí vést na kategorii nebo stránku značky
+  for (const p of db.products) {
+    const link = customerLink(p, search);
+    assert.ok(link.startsWith(search) || link === p.source, p.id);
+    assert.ok(!/\/znacka\/|\/gely-na-gelove-nehty\/$|\/modelovaci-gely\/$/.test(link), p.id);
+  }
 });

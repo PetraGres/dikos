@@ -5,7 +5,14 @@ export const CONFIG = {
   // Za kolik dní připomenout další manikúru.
   reminderDays: 21,
 
-  // Slevový kód v připomínce. Prázdný řetězec = kód se nezobrazí.
-  couponCode: 'NEHTIK',
-  couponText: 'S kódem NEHTIK máš na další nákup slevu 10 %.',
+  // Text se slevou v připomínce (např. 'S kódem XYZ máš slevu 10 %.').
+  // Prázdný řetězec = sleva se nezobrazí.
+  couponText: '',
+
+  // Značka pro měření návštěv z aplikace (Google Analytics apod.).
+  // Prázdný řetězec = odkazy bez značky.
+  utmSource: 'nehtik',
+
+  // Vyhledávání na e-shopu – použije se u produktů bez product_url v databázi.
+  searchUrl: 'https://www.dikos-kosmetika.cz/vyhledavani/?string=',
 };

@@ -13,9 +13,18 @@ Funguje i offline.
    - Když je čas uvedený jako rozsah (např. 60–120 s), aplikace ukáže obě hodnoty a vybere zákaznice.
    - Když čas chybí, aplikace zobrazí upozornění „řiď se návodem produktu“ a nabídne
      ruční zadání času z návodu.
+   - Pod každým časem je volba **„Jiný čas“** – zákaznice si může zadat vlastní čas (1–600 s),
+     např. podle návodu ke své lampě. Výchozí je vždy čas z databáze.
+   - **Rychlý časovač** na úvodní obrazovce: zákaznice zvolí lampu a vidí jen produkty,
+     které mají pro tu lampu v databázi uvedený čas (u Gummy Base a Nylon Fiber po krocích).
+     Seznam se tvoří z `data/dikos_nail_guide.json` automaticky – doplněný čas se v něm
+     objeví sám. Dole je pole pro vlastní čas.
 3. **Připomínka další manikúry.** Po dokončení si zákaznice uloží připomínku do kalendáře
    (za 21 dní). Na úvodní obrazovce pak vidí odpočet a tlačítko „Doplnit zásoby“,
-   v posledních dnech i slevový kód.
+   v posledních dnech i text se slevou, pokud je v `config.js` vyplněný (teď vypnuto).
+
+4. **Nákupní seznam.** Pod postupem je seznam „Co budeš potřebovat“ s odkazy na produkty
+   v e-shopu. Do košíku je zákaznice vkládá přímo na Dikosu – e-shop se nijak neupravuje.
 
 Žádné účty, žádný server, žádná databáze. Ceny a dostupnost zůstávají v e-shopu.
 
@@ -23,9 +32,19 @@ Funguje i offline.
 
 | Co | Kde | Jak často |
 |---|---|---|
-| Slevový kód, počet dní do připomínky | `config.js` | podle potřeby (např. 1× měsíčně) |
+| Text se slevou (teď prázdný = vypnuto), počet dní do připomínky | `config.js` | podle potřeby (např. 1× měsíčně) |
 | Produkty, časy vytvrzení, postupy | `data/dikos_nail_guide.json` | při změně sortimentu |
 | Kontrola chybějících časů a odkazů | otevřít `admin.html` | občas |
+| Značka měření `utmSource` (prázdná = vypnuto) | `config.js` | jednou |
+| Přímé adresy produktů (nepovinné) | pole `product_url` v JSONu | když se hodí |
+
+Odkazy na produkty: aplikace použije `product_url` (přímý detail produktu). Když chybí,
+otevře vyhledávání na Dikosu – podle `search_term`, jinak podle názvu produktu bez
+dovětku za pomlčkou. Pole `source` slouží jen pro kontrolu údajů v `admin.html`.
+
+Měření: všechny odkazy do e-shopu nesou `utm_source=nehtik`, `utm_medium=app` a
+`utm_campaign` podle místa v aplikaci (`produkt`, `zasoby`, `uvod`, `kalendar`).
+V Google Analytics je najdeš v přehledu zdrojů návštěvnosti; na e-shopu se nic nemění.
 
 Po úpravě souborů zvyš verzi `CACHE` v `sw.js` (např. `nehtik-v2`), aby se změna
 projevila i lidem, kteří mají appku uloženou na ploše.

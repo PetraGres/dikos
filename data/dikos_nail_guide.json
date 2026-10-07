@@ -179,7 +179,8 @@
           "curing_seconds": 60
         }
       ],
-      "source": "https://www.dikos-kosmetika.cz/gummy-base-ceramic-03-light-pink-10-ml-enii/"
+      "source": "https://www.dikos-kosmetika.cz/gummy-base-ceramic-03-light-pink-10-ml-enii/",
+      "product_url": "https://www.dikos-kosmetika.cz/gummy-base-ceramic-03-light-pink-10-ml-enii/"
     },
     {
       "id": "NFG-02",
@@ -229,7 +230,8 @@
           "curing_seconds": null
         }
       ],
-      "source": "https://www.dikos-kosmetika.cz/modelovaci-gely/enii-nylon-fiber-gel-02-clear-stavebni-uv-led-gel--40-ml/"
+      "source": "https://www.dikos-kosmetika.cz/modelovaci-gely/enii-nylon-fiber-gel-02-clear-stavebni-uv-led-gel--40-ml/",
+      "product_url": "https://www.dikos-kosmetika.cz/modelovaci-gely/enii-nylon-fiber-gel-02-clear-stavebni-uv-led-gel--40-ml/"
     },
     {
       "id": "EI-01-E010",
@@ -250,7 +252,8 @@
       },
       "wiping": "unknown",
       "top_required": false,
-      "source": "https://www.dikos-kosmetika.cz/modelovaci-gely/ultra-strong-fiber-pink--gel-10-ml-enii-nails/"
+      "source": "https://www.dikos-kosmetika.cz/modelovaci-gely/ultra-strong-fiber-pink--gel-10-ml-enii-nails/",
+      "product_url": "https://www.dikos-kosmetika.cz/modelovaci-gely/ultra-strong-fiber-pink--gel-10-ml-enii-nails/"
     },
     {
       "id": "NA-22-01",
@@ -271,7 +274,8 @@
       "wiping": "remove_with_cleaner",
       "top_required": null,
       "note": "Čas závisí na typu lampy a tloušťce vrstvy.",
-      "source": "https://www.dikos-kosmetika.cz/nailee-polygel-v-tube-30-ml-clear/"
+      "source": "https://www.dikos-kosmetika.cz/nailee-polygel-v-tube-30-ml-clear/",
+      "product_url": "https://www.dikos-kosmetika.cz/nailee-polygel-v-tube-30-ml-clear/"
     },
     {
       "id": "NA-02-14",
@@ -300,7 +304,8 @@
         "uv_led_seconds": "30-45"
       },
       "wiping": "no_wipe",
-      "source": "https://www.dikos-kosmetika.cz/nailee-top-coat-matt-7g/"
+      "source": "https://www.dikos-kosmetika.cz/nailee-top-coat-matt-7g/",
+      "product_url": "https://www.dikos-kosmetika.cz/nailee-top-coat-matt-7g/"
     },
     {
       "id": "EI-07-24",
@@ -452,6 +457,7 @@
     "Pokud je čas uveden jako rozsah, aplikace má zobrazit rozsah, nevolit sama jednu hodnotu.",
     "Pokud je údaj null, aplikace nemá vytvářet časovač na základě výkonu lampy.",
     "Každý produkt v průvodci má mít source URL pro administraci a kontrolu aktuálnosti.",
+    "product_url = přímá adresa detailu produktu pro zákaznici. Když chybí, aplikace otevře vyhledávání na e-shopu podle search_term, jinak podle názvu bez dovětku za pomlčkou.",
     "Dostupnost a cena nejsou součástí této databáze – mají se načítat dynamicky z e-shopu/API."
   ]
 }
