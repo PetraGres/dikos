@@ -23,25 +23,10 @@ Funguje i offline.
    (za 21 dní). Na úvodní obrazovce pak vidí odpočet a tlačítko „Doplnit zásoby“,
    v posledních dnech i slevový kód.
 
-4. **Nákupní seznam a košík.** Pod postupem je seznam „Co budeš potřebovat“. Po zapnutí
-   košíku (viz níže) si zákaznice produkty zaškrtne a tlačítkem je vloží do svého košíku
-   na Dikos – přičtou se k tomu, co už v košíku má.
+4. **Nákupní seznam.** Pod postupem je seznam „Co budeš potřebovat“ s odkazy na produkty
+   v e-shopu. Do košíku je zákaznice vkládá přímo na Dikosu – e-shop se nijak neupravuje.
 
 Žádné účty, žádný server, žádná databáze. Ceny a dostupnost zůstávají v e-shopu.
-
-## Košík na Dikos (Shoptet)
-
-Aplikace přesměruje zákaznici na `https://www.dikos-kosmetika.cz/?nehtik_add=KÓD:KUSY,KÓD:KUSY`.
-Produkty do košíku vloží skript v zápatí e-shopu přes oficiální Shoptet funkci
-`shoptet.cartShared.addToCart` – vkládá je postupně, bez vyskakovacích oken, max. 20 položek
-a 10 kusů, a parametr hned smaže z adresy (obnovení stránky nic nezdvojí). Pak otevře košík.
-
-1. Obsah `shoptet/zapati-skript.html` vlož v Shoptetu do *Vzhled a obsah → Editor → HTML kód → Zápatí*.
-2. Otevři `test-kosik.html` a projdi testy 1–4 (v telefonu i počítači).
-3. Když vše sedí, nastav v `config.js` `cartEnabled: true`.
-
-Kód produktu: aplikace použije pole `shoptet_code` z JSONu, a pokud chybí, `id`.
-U produktů s odstíny musí jít o **kód varianty** (např. `NA-18-119` = gel lak č. 119).
 
 ## Co je potřeba udržovat
 

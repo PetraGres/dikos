@@ -112,17 +112,6 @@ test('nákupní seznam: produkty z postupu bez duplicit', async () => {
   assert.deepEqual(shoppingList(nfg).map((p) => p.id), ['NFG-02', 'EI-15-66']);
 });
 
-test('odkaz do košíku nese kódy a kusy v parametru nehtik_add', async () => {
-  const { buildCartUrl, shoptetCode, CART_PARAM } = await import('../logic.js');
-  assert.equal(shoptetCode({ id: 'NA-02-13' }), 'NA-02-13');
-  assert.equal(shoptetCode({ id: 'NA-02-13', shoptet_code: 'X/1' }), 'X/1');
-  const url = buildCartUrl('https://www.dikos-kosmetika.cz/', [
-    { code: 'NA-18-119', amount: 1 }, { code: '183/GSB', amount: 2 }, { code: 'NIC', amount: 0 },
-  ]);
-  assert.equal(new URL(url).hostname, 'www.dikos-kosmetika.cz');
-  assert.equal(new URL(url).searchParams.get(CART_PARAM), 'NA-18-119:1,183/GSB:2');
-});
-
 test('odkaz pro zákaznici: přímá adresa, jinak vyhledávání podle názvu', async () => {
   const { customerLink } = await import('../logic.js');
   const search = 'https://www.dikos-kosmetika.cz/vyhledavani/?string=';
