@@ -167,8 +167,8 @@ function customTimeControl(label, buttonText = '▶ Spustit vlastní čas') {
   return el('div', { class: 'manual' }, input, el('button', { class: 'btn small ghost', onclick: start }, buttonText));
 }
 
-function otherTime(label) {
-  return el('details', { class: 'other-time' },
+function otherTime(label, open = false) {
+  return el('details', { class: 'other-time', open },
     el('summary', {}, 'Jiný čas'),
     el('p', { class: 'muted' }, 'Uvedený čas je z produktové stránky. Pokud tvůj návod uvádí jiný, zadej ho sem.'),
     customTimeControl(label));
@@ -183,14 +183,14 @@ function curingControls(step, lamp) {
   if (c.kind === 'fixed') {
     return el('div', { class: 'row' },
       el('button', { class: 'btn small', onclick: () => startTimer(c.seconds, step.name) }, `▶ Vytvrdit ${c.seconds} s`),
-      otherTime(step.name));
+      otherTime(step.name, step.adjustable));
   }
   if (c.kind === 'range') {
     return el('div', {},
       el('p', { class: 'muted' }, `Výrobce uvádí ${formatCuring(c)} podle lampy a tloušťky vrstvy. Zvol čas:`),
       el('div', { class: 'row' },
         [c.min, c.max].map((s) => el('button', { class: 'btn small ghost', onclick: () => startTimer(s, step.name) }, `▶ ${s} s`))),
-      otherTime(step.name));
+      otherTime(step.name, step.adjustable));
   }
   // čas neuveden – vlastní čas z návodu produktu
   return el('div', {},

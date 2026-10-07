@@ -143,11 +143,20 @@ function stepsFromProduct(db, product, lamp) {
     const isPrep = /prep|příprava/i.test(s.name);
     // Barva/TOP a olej jsou jiné produkty, odkaz na hlavní produkt by mátl.
     const isOther = /olej|barva|top/i.test(s.name);
+    const curing = stepCuring(product, s, lamp);
+    // Čas u kroku barva/TOP je z návodu hlavního produktu – barva nebo top
+    // zákaznice může mít jiný čas, proto se nabídne přenastavení.
+    const colorStep = /barva|top/i.test(s.name) && curing && curing.kind !== 'missing';
     return {
       name: s.name,
-      hint: isPrep ? prepStep(db, true).hint : '',
+      hint: isPrep
+        ? prepStep(db, true).hint
+        : colorStep
+          ? `Návod ${product.name} uvádí pro tento krok ${formatCuring(curing)}. Používáš jinou barvu nebo top? Nastav čas podle jejich návodu.`
+          : '',
       product: isPrep ? byId(db, 'EI-15-66') : isOther ? null : product,
-      curing: stepCuring(product, s, lamp),
+      curing,
+      adjustable: colorStep,
     };
   });
 }

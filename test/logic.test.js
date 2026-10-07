@@ -39,6 +39,16 @@ test('Gummy Base: krokové časy platí pro UV/LED, pro LED lampu chybí', () =>
   assert.ok(gummyLed.steps.filter((s) => s.curing).every((s) => s.curing.kind === 'missing'));
 });
 
+test('Gummy Base: krok TOP / barva nabízí přenastavení času', () => {
+  const res = buildPlans(db, 'flow_strengthening', { state: 'damaged', length: 'natural', lamp: 'uv_led' });
+  const steps = res.plans.find((p) => p.product.id === 'GBC-03').steps;
+  const top = steps.find((s) => s.name === 'TOP / barva');
+  assert.equal(top.curing.seconds, 60);
+  assert.equal(top.adjustable, true);
+  assert.match(top.hint, /60 s/);
+  assert.ok(steps.filter((s) => s !== top).every((s) => !s.adjustable));
+});
+
 test('modeláž na tipy nabídne Nylon Fiber i Polygel', () => {
   const res = buildPlans(db, 'flow_modeling', { base: 'tipy', lamp: 'uv_led' });
   const ids = res.plans.map((p) => p.product.id).sort();

@@ -21,7 +21,7 @@ Funguje i offline.
      objeví sám. Dole je pole pro vlastní čas.
 3. **Připomínka další manikúry.** Po dokončení si zákaznice uloží připomínku do kalendáře
    (za 21 dní). Na úvodní obrazovce pak vidí odpočet a tlačítko „Doplnit zásoby“,
-   v posledních dnech i slevový kód.
+   v posledních dnech i text se slevou, pokud je v `config.js` vyplněný (teď vypnuto).
 
 4. **Nákupní seznam.** Pod postupem je seznam „Co budeš potřebovat“ s odkazy na produkty
    v e-shopu. Do košíku je zákaznice vkládá přímo na Dikosu – e-shop se nijak neupravuje.
@@ -32,7 +32,7 @@ Funguje i offline.
 
 | Co | Kde | Jak často |
 |---|---|---|
-| Slevový kód, počet dní do připomínky | `config.js` | podle potřeby (např. 1× měsíčně) |
+| Text se slevou (teď prázdný = vypnuto), počet dní do připomínky | `config.js` | podle potřeby (např. 1× měsíčně) |
 | Produkty, časy vytvrzení, postupy | `data/dikos_nail_guide.json` | při změně sortimentu |
 | Kontrola chybějících časů a odkazů | otevřít `admin.html` | občas |
 | Přímé adresy produktů (nepovinné) | pole `product_url` v JSONu | když se hodí |
