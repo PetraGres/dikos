@@ -35,11 +35,16 @@ Funguje i offline.
 | Text se slevou (teď prázdný = vypnuto), počet dní do připomínky | `config.js` | podle potřeby (např. 1× měsíčně) |
 | Produkty, časy vytvrzení, postupy | `data/dikos_nail_guide.json` | při změně sortimentu |
 | Kontrola chybějících časů a odkazů | otevřít `admin.html` | občas |
+| Značka měření `utmSource` (prázdná = vypnuto) | `config.js` | jednou |
 | Přímé adresy produktů (nepovinné) | pole `product_url` v JSONu | když se hodí |
 
 Odkazy na produkty: aplikace použije `product_url` (přímý detail produktu). Když chybí,
 otevře vyhledávání na Dikosu – podle `search_term`, jinak podle názvu produktu bez
 dovětku za pomlčkou. Pole `source` slouží jen pro kontrolu údajů v `admin.html`.
+
+Měření: všechny odkazy do e-shopu nesou `utm_source=nehtik`, `utm_medium=app` a
+`utm_campaign` podle místa v aplikaci (`produkt`, `zasoby`, `uvod`, `kalendar`).
+V Google Analytics je najdeš v přehledu zdrojů návštěvnosti; na e-shopu se nic nemění.
 
 Po úpravě souborů zvyš verzi `CACHE` v `sw.js` (např. `nehtik-v2`), aby se změna
 projevila i lidem, kteří mají appku uloženou na ploše.

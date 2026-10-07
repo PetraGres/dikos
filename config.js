@@ -9,6 +9,10 @@ export const CONFIG = {
   // Prázdný řetězec = sleva se nezobrazí.
   couponText: '',
 
+  // Značka pro měření návštěv z aplikace (Google Analytics apod.).
+  // Prázdný řetězec = odkazy bez značky.
+  utmSource: 'nehtik',
+
   // Vyhledávání na e-shopu – použije se u produktů bez product_url v databázi.
   searchUrl: 'https://www.dikos-kosmetika.cz/vyhledavani/?string=',
 };

@@ -2,7 +2,7 @@ import { CONFIG } from './config.js';
 import {
   FLOW_QUESTIONS, buildPlans, formatCuring, addDays, buildIcs,
   quickTimerOptions, parseCustomSeconds, CUSTOM_TIME_MAX,
-  shoppingList, customerLink,
+  shoppingList, customerLink, withUtm,
 } from './logic.js';
 
 const app = document.getElementById('app');
@@ -36,11 +36,13 @@ function storageSet(key, value) {
   try { localStorage.setItem(key, value); } catch { /* soukromé okno apod. */ }
 }
 
+const shopLink = (url, campaign) => withUtm(url, CONFIG.utmSource, campaign);
+
 const fmtDate = (d) => d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long' });
 
 function productLink(product) {
   if (!product?.source) return null;
-  return el('a', { href: customerLink(product, CONFIG.searchUrl), target: '_blank', rel: 'noopener', class: 'product' },
+  return el('a', { href: shopLink(customerLink(product, CONFIG.searchUrl), 'produkt'), target: '_blank', rel: 'noopener', class: 'product' },
     `${product.name} – v e-shopu ↗`);
 }
 
@@ -81,7 +83,7 @@ function reminderCard() {
     el('p', { class: 'muted' }, `Naposledy ${fmtDate(new Date(saved))}, další kolem ${fmtDate(next)}.`),
     days <= 3 && CONFIG.couponText ? el('p', {}, CONFIG.couponText) : null,
     el('div', { class: 'row' },
-      el('a', { class: 'btn small', href: CONFIG.shopUrl, target: '_blank', rel: 'noopener' }, 'Doplnit zásoby')),
+      el('a', { class: 'btn small', href: shopLink(CONFIG.shopUrl, 'zasoby'), target: '_blank', rel: 'noopener' }, 'Doplnit zásoby')),
   );
 }
 
@@ -97,7 +99,7 @@ function homeView() {
         onclick: () => go({ view: 'question', flowId: f.id, index: 0, answers: {} }),
       }, f.title))),
     el('p', { class: 'muted' },
-      'Materiál najdeš na ', el('a', { href: CONFIG.shopUrl, target: '_blank', rel: 'noopener' }, 'dikos-kosmetika.cz'), '.'),
+      'Materiál najdeš na ', el('a', { href: shopLink(CONFIG.shopUrl, 'uvod'), target: '_blank', rel: 'noopener' }, 'dikos-kosmetika.cz'), '.'),
   );
 }
 
@@ -271,7 +273,7 @@ function finish() {
 
 function doneView() {
   const next = addDays(new Date(), CONFIG.reminderDays);
-  const description = [`Čas na nové nehty. ${CONFIG.shopUrl}`, CONFIG.couponText].filter(Boolean).join('\n');
+  const description = [`Čas na nové nehty. ${shopLink(CONFIG.shopUrl, 'kalendar')}`, CONFIG.couponText].filter(Boolean).join('\n');
   const downloadIcs = () => {
     const blob = new Blob([buildIcs(next, 'Nové nehty 💅 (Nehtík)', description)], { type: 'text/calendar' });
     const a = el('a', { href: URL.createObjectURL(blob), download: 'nehtik-pripominka.ics' });

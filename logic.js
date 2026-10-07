@@ -332,6 +332,17 @@ export function shoppingList(plan) {
   return [...seen.values()];
 }
 
+// Přidá k odkazu do e-shopu značky utm_*, aby šly návštěvy z aplikace změřit.
+// campaign říká, odkud v aplikaci odkaz vede (produkt, zasoby, kalendar…).
+export function withUtm(url, source, campaign) {
+  if (!source) return url;
+  const u = new URL(url);
+  u.searchParams.set('utm_source', source);
+  u.searchParams.set('utm_medium', 'app');
+  u.searchParams.set('utm_campaign', campaign);
+  return u.toString();
+}
+
 // Odkaz pro zákaznici: přímá adresa produktu, jinak vyhledávání na e-shopu.
 // (source je zdroj údajů pro administraci – často jen kategorie.)
 // Hledá se search_term, jinak název bez dovětku za pomlčkou – kratší dotaz najde spíš.

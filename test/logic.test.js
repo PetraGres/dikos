@@ -122,6 +122,17 @@ test('nákupní seznam: produkty z postupu bez duplicit', async () => {
   assert.deepEqual(shoppingList(nfg).map((p) => p.id), ['NFG-02', 'EI-15-66']);
 });
 
+test('měřicí značky: přidají se k odkazu a nerozbijí vyhledávání', async () => {
+  const { withUtm, customerLink } = await import('../logic.js');
+  const search = 'https://www.dikos-kosmetika.cz/vyhledavani/?string=';
+  const u = new URL(withUtm(customerLink(product('EI-15-66'), search), 'nehtik', 'produkt'));
+  assert.equal(u.searchParams.get('string'), 'Nail Prep');
+  assert.equal(u.searchParams.get('utm_source'), 'nehtik');
+  assert.equal(u.searchParams.get('utm_medium'), 'app');
+  assert.equal(u.searchParams.get('utm_campaign'), 'produkt');
+  assert.equal(withUtm('https://www.dikos-kosmetika.cz/', '', 'x'), 'https://www.dikos-kosmetika.cz/');
+});
+
 test('odkaz pro zákaznici: přímá adresa, jinak vyhledávání podle názvu', async () => {
   const { customerLink } = await import('../logic.js');
   const search = 'https://www.dikos-kosmetika.cz/vyhledavani/?string=';
