@@ -8,4 +8,8 @@ export const CONFIG = {
   // Slevový kód v připomínce. Prázdný řetězec = kód se nezobrazí.
   couponCode: 'NEHTIK',
   couponText: 'S kódem NEHTIK máš na další nákup slevu 10 %.',
+
+  // Vkládání do košíku na Dikos. Zapnout (true) až po vložení skriptu
+  // shoptet/zapati-skript.html do Shoptetu a úspěšném testu (test-kosik.html).
+  cartEnabled: false,
 };

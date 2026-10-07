@@ -137,3 +137,11 @@ th, td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--bord
 .quick-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
 .quick-item:last-child { border-bottom: 0; }
 .quick-item .row { flex-shrink: 0; }
+
+.shop-list { list-style: none; padding: 0; margin: 8px 0 16px; }
+.shop-list li { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.shop-list li:last-child { border-bottom: 0; }
+.shop-item { display: flex; gap: 10px; align-items: center; font-weight: 600; cursor: pointer; }
+.shop-item input { width: 20px; height: 20px; accent-color: var(--accent); flex-shrink: 0; }
+.shop-item + .product { display: inline-block; margin-left: 30px; }
+.card h2:first-child { margin-top: 0; }

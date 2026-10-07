@@ -1,5 +1,5 @@
 // Offline cache. Při změně souborů zvyš číslo verze.
-const CACHE = 'nehtik-v2';
+const CACHE = 'nehtik-v3';
 const FILES = [
   './', 'index.html', 'styles.css', 'app.js', 'logic.js', 'config.js',
   'manifest.webmanifest', 'icon.svg', 'data/dikos_nail_guide.json',

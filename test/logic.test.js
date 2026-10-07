@@ -103,3 +103,22 @@ test('vlastní čas přijme jen celé sekundy 1–600', async () => {
   assert.equal(parseCustomSeconds('601'), null);
   assert.equal(parseCustomSeconds('12.5'), null);
 });
+
+test('nákupní seznam: produkty z postupu bez duplicit', async () => {
+  const { shoppingList } = await import('../logic.js');
+  const res = buildPlans(db, 'flow_gel_lak', { lamp: 'led', finish: 'NA-02-14' });
+  assert.deepEqual(shoppingList(res.plans[0]).map((p) => p.id), ['NA-02-13', 'NA-02-14']);
+  const nfg = buildPlans(db, 'flow_modeling', { base: 'tipy', lamp: 'uv_led' }).plans.find((p) => p.product.id === 'NFG-02');
+  assert.deepEqual(shoppingList(nfg).map((p) => p.id), ['NFG-02', 'EI-15-66']);
+});
+
+test('odkaz do košíku nese kódy a kusy v parametru nehtik_add', async () => {
+  const { buildCartUrl, shoptetCode, CART_PARAM } = await import('../logic.js');
+  assert.equal(shoptetCode({ id: 'NA-02-13' }), 'NA-02-13');
+  assert.equal(shoptetCode({ id: 'NA-02-13', shoptet_code: 'X/1' }), 'X/1');
+  const url = buildCartUrl('https://www.dikos-kosmetika.cz/', [
+    { code: 'NA-18-119', amount: 1 }, { code: '183/GSB', amount: 2 }, { code: 'NIC', amount: 0 },
+  ]);
+  assert.equal(new URL(url).hostname, 'www.dikos-kosmetika.cz');
+  assert.equal(new URL(url).searchParams.get(CART_PARAM), 'NA-18-119:1,183/GSB:2');
+});

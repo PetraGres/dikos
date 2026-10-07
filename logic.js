@@ -313,3 +313,33 @@ export function quickTimerOptions(db, lamp) {
   }
   return options;
 }
+
+// --- košík na Shoptetu ---
+// Aplikace přesměruje na e-shop s parametrem nehtik_add=KÓD:KUSY,KÓD:KUSY.
+// Produkty do košíku vloží skript v zápatí Shoptetu (shoptet/zapati-skript.html).
+
+export const CART_PARAM = 'nehtik_add';
+
+// Kód produktu v Shoptetu: pole shoptet_code, jinak id z databáze.
+export function shoptetCode(product) {
+  return product.shoptet_code || product.id;
+}
+
+export function buildCartUrl(shopUrl, items) {
+  const url = new URL(shopUrl);
+  const value = items
+    .filter((i) => i.amount > 0)
+    .map((i) => `${i.code}:${i.amount}`)
+    .join(',');
+  url.searchParams.set(CART_PARAM, value);
+  return url.toString();
+}
+
+// Produkty z postupu (bez duplicit) – podklad pro nákupní seznam.
+export function shoppingList(plan) {
+  const seen = new Map();
+  for (const p of [plan.product, ...plan.steps.map((s) => s.product)]) {
+    if (p && p.source && !seen.has(p.id)) seen.set(p.id, p);
+  }
+  return [...seen.values()];
+}

@@ -2,6 +2,7 @@ import { CONFIG } from './config.js';
 import {
   FLOW_QUESTIONS, buildPlans, formatCuring, addDays, buildIcs,
   quickTimerOptions, parseCustomSeconds, CUSTOM_TIME_MAX,
+  shoppingList, shoptetCode, buildCartUrl,
 } from './logic.js';
 
 const app = document.getElementById('app');
@@ -229,6 +230,40 @@ function quickView() {
   );
 }
 
+// Nákupní seznam k postupu. S cartEnabled umí vybrané produkty vložit do košíku na Dikos.
+function shoppingCard(plan) {
+  const products = shoppingList(plan);
+  if (!products.length) return null;
+  if (!CONFIG.cartEnabled) {
+    return el('section', { class: 'card' },
+      el('h2', {}, 'Co budeš potřebovat'),
+      el('ul', { class: 'shop-list' }, products.map((p) => el('li', {}, productLink(p)))));
+  }
+  const selected = new Set(products.map((p) => p.id));
+  const cartBtn = el('a', { class: 'btn block', target: '_blank', rel: 'noopener' });
+  const update = () => {
+    const items = products.filter((p) => selected.has(p.id)).map((p) => ({ code: shoptetCode(p), amount: 1 }));
+    cartBtn.textContent = items.length ? `🛒 Vložit do košíku na Dikos (${items.length})` : 'Vyber produkty';
+    if (items.length) cartBtn.href = buildCartUrl(CONFIG.shopUrl, items);
+    else cartBtn.removeAttribute('href');
+  };
+  const rows = products.map((p) => {
+    const box = el('input', {
+      type: 'checkbox', checked: true,
+      onchange: (e) => { e.target.checked ? selected.add(p.id) : selected.delete(p.id); update(); },
+    });
+    return el('li', {},
+      el('label', { class: 'shop-item' }, box, el('span', {}, p.name)),
+      el('a', { href: p.source, target: '_blank', rel: 'noopener', class: 'product' }, 'detail v e-shopu ↗'));
+  });
+  update();
+  return el('section', { class: 'card' },
+    el('h2', {}, 'Co budeš potřebovat'),
+    el('p', { class: 'muted' }, 'Vybrané produkty se přidají k tomu, co už máš v košíku na Dikos.'),
+    el('ul', { class: 'shop-list' }, rows),
+    cartBtn);
+}
+
 function stepsView({ plan, lamp }) {
   const done = new Set();
   const list = el('div', {});
@@ -249,6 +284,7 @@ function stepsView({ plan, lamp }) {
     productLink(plan.product),
     plan.notes.length ? el('ul', { class: 'notes card' }, plan.notes.map((n) => el('li', {}, n))) : null,
     list,
+    shoppingCard(plan),
     el('button', { class: 'btn block', onclick: finish }, 'Hotovo – připomeň mi další manikúru'),
   );
 }
