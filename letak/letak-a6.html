@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<title>Nehtík – letáček A6</title>
+<style>
+  @page { size: 105mm 148mm; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #2b2024; }
+  .page {
+    width: 105mm; height: 148mm; padding: 9mm 8mm 7mm;
+    background: #fbf6f4; display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+  .brand { display: flex; align-items: center; gap: 2.5mm; font-weight: 800; font-size: 15pt; }
+  .brand img { width: 9mm; height: 9mm; }
+  .brand span { font-weight: 400; color: #7a6a70; font-size: 10pt; }
+  h1 { font-size: 17pt; line-height: 1.15; margin: 5mm 0 4mm; color: #5a1f36; }
+  ul { list-style: none; padding: 0; margin: 0 0 5mm; text-align: left; font-size: 9.5pt; line-height: 1.35; }
+  li { display: flex; gap: 2mm; margin-bottom: 1.8mm; }
+  li b { color: #c2577a; }
+  .qr { background: #fff; border-radius: 4mm; padding: 2.5mm; }
+  .qr img { width: 36mm; height: 36mm; display: block; }
+  .scan { font-weight: 700; margin: 3mm 0 1mm; font-size: 10.5pt; }
+  .url { font-size: 8.5pt; color: #7a6a70; }
+  .foot { margin-top: auto; font-size: 8pt; color: #7a6a70; }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="brand"><img src="../icon.svg" alt="">Nehtík <span>by Dikos</span></div>
+    <h1>Gelové nehty doma<br>krok za krokem</h1>
+    <ul>
+      <li><b>✓</b> Postup podle toho, co chceš udělat – gel lak, zpevnění, modeláž, oprava</li>
+      <li><b>✓</b> Časovač lampy s časy pro produkty z Dikosu</li>
+      <li><b>✓</b> Připomínka, kdy je čas na nové nehty</li>
+    </ul>
+    <div class="qr"><img src="nehtik-qr.svg" alt="QR kód aplikace Nehtík"></div>
+    <p class="scan">Naskenuj telefonem 📱</p>
+    <p class="url">petragres.github.io/dikos</p>
+    <p class="foot">Zdarma, bez registrace · dikos-kosmetika.cz</p>
+  </div>
+</body>
+</html>
