@@ -2,7 +2,7 @@ import { CONFIG } from './config.js';
 import {
   FLOW_QUESTIONS, buildPlans, formatCuring, addDays, buildIcs,
   quickTimerOptions, parseCustomSeconds, CUSTOM_TIME_MAX,
-  shoppingList, shoptetCode, buildCartUrl,
+  shoppingList, shoptetCode, buildCartUrl, customerLink,
 } from './logic.js';
 
 const app = document.getElementById('app');
@@ -40,7 +40,7 @@ const fmtDate = (d) => d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'l
 
 function productLink(product) {
   if (!product?.source) return null;
-  return el('a', { href: product.source, target: '_blank', rel: 'noopener', class: 'product' },
+  return el('a', { href: customerLink(product, CONFIG.searchUrl), target: '_blank', rel: 'noopener', class: 'product' },
     `${product.name} – v e-shopu ↗`);
 }
 
@@ -254,7 +254,7 @@ function shoppingCard(plan) {
     });
     return el('li', {},
       el('label', { class: 'shop-item' }, box, el('span', {}, p.name)),
-      el('a', { href: p.source, target: '_blank', rel: 'noopener', class: 'product' }, 'detail v e-shopu ↗'));
+      el('a', { href: customerLink(p, CONFIG.searchUrl), target: '_blank', rel: 'noopener', class: 'product' }, 'detail v e-shopu ↗'));
   });
   update();
   return el('section', { class: 'card' },

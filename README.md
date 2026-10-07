@@ -50,6 +50,11 @@ U produktů s odstíny musí jít o **kód varianty** (např. `NA-18-119` = gel 
 | Slevový kód, počet dní do připomínky | `config.js` | podle potřeby (např. 1× měsíčně) |
 | Produkty, časy vytvrzení, postupy | `data/dikos_nail_guide.json` | při změně sortimentu |
 | Kontrola chybějících časů a odkazů | otevřít `admin.html` | občas |
+| Přímé adresy produktů (nepovinné) | pole `product_url` v JSONu | když se hodí |
+
+Odkazy na produkty: aplikace použije `product_url` (přímý detail produktu). Když chybí,
+otevře vyhledávání na Dikosu – podle `search_term`, jinak podle názvu produktu bez
+dovětku za pomlčkou. Pole `source` slouží jen pro kontrolu údajů v `admin.html`.
 
 Po úpravě souborů zvyš verzi `CACHE` v `sw.js` (např. `nehtik-v2`), aby se změna
 projevila i lidem, kteří mají appku uloženou na ploše.

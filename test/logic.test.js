@@ -122,3 +122,18 @@ test('odkaz do košíku nese kódy a kusy v parametru nehtik_add', async () => {
   assert.equal(new URL(url).hostname, 'www.dikos-kosmetika.cz');
   assert.equal(new URL(url).searchParams.get(CART_PARAM), 'NA-18-119:1,183/GSB:2');
 });
+
+test('odkaz pro zákaznici: přímá adresa, jinak vyhledávání podle názvu', async () => {
+  const { customerLink } = await import('../logic.js');
+  const search = 'https://www.dikos-kosmetika.cz/vyhledavani/?string=';
+  assert.equal(customerLink(product('NA-22-01'), search), 'https://www.dikos-kosmetika.cz/nailee-polygel-v-tube-30-ml-clear/');
+  assert.equal(customerLink(product('NA-02-13'), search), search + 'Nailee%20Base%20Build%20Up%20Elastic%205g');
+  assert.equal(customerLink(product('EI-15-66'), search), search + 'Nail%20Prep');
+  assert.equal(customerLink({ name: 'X – Y', search_term: 'NA-18-119' }, search), search + 'NA-18-119');
+  // žádný zákaznický odkaz nesmí vést na kategorii nebo stránku značky
+  for (const p of db.products) {
+    const link = customerLink(p, search);
+    assert.ok(link.startsWith(search) || link === p.source, p.id);
+    assert.ok(!/\/znacka\/|\/gely-na-gelove-nehty\/$|\/modelovaci-gely\/$/.test(link), p.id);
+  }
+});

@@ -10,11 +10,12 @@
 <body>
   <main>
     <h1>Kontrola dat</h1>
-    <p class="muted">Přehled produktů z <code>data/dikos_nail_guide.json</code>. Žlutě jsou chybějící časy vytvrzení – v aplikaci se u nich zobrazí upozornění „řiď se návodem produktu“. Odkaz vede na zdrojovou stránku e-shopu.</p>
+    <p class="muted">Přehled produktů z <code>data/dikos_nail_guide.json</code>. Žlutě jsou chybějící časy vytvrzení – v aplikaci se u nich zobrazí upozornění „řiď se návodem produktu“. Odkaz „Zdroj“ vede na stránku, odkud jsou údaje. Sloupec „Zákaznice“ ukazuje, kam vede odkaz v aplikaci – „hledání“ znamená, že chybí <code>product_url</code> a otevře se vyhledávání podle názvu.</p>
     <div id="out"></div>
   </main>
   <script type="module">
-    import { productCuring, formatCuring, LAMP_KEYS } from './logic.js';
+    import { productCuring, formatCuring, LAMP_KEYS, customerLink } from './logic.js';
+    import { CONFIG } from './config.js';
 
     const db = await (await fetch('data/dikos_nail_guide.json')).json();
     const out = document.getElementById('out');
@@ -36,12 +37,13 @@
         data ověřena ${esc(db.source?.checked)}
       </section>
       <div class="table-wrap"><table>
-        <thead><tr><th>Produkt</th><th>UV</th><th>LED</th><th>UV/LED</th><th>Zdroj</th></tr></thead>
+        <thead><tr><th>Produkt</th><th>UV</th><th>LED</th><th>UV/LED</th><th>Zdroj</th><th>Zákaznice</th></tr></thead>
         <tbody>${db.products.map((p) => `
           <tr>
             <td><strong>${esc(p.name)}</strong><br><span class="muted">${esc(p.id)} · ${esc(p.category)}</span></td>
             ${lamps.map((l) => cell(p, l)).join('')}
             <td><a href="${esc(p.source)}" target="_blank" rel="noopener">otevřít ↗</a></td>
+            <td><a href="${esc(customerLink(p, CONFIG.searchUrl))}" target="_blank" rel="noopener">${p.product_url ? 'detail' : '<span class="missing">hledání</span>'} ↗</a></td>
           </tr>`).join('')}
         </tbody>
       </table></div>

@@ -343,3 +343,12 @@ export function shoppingList(plan) {
   }
   return [...seen.values()];
 }
+
+// Odkaz pro zákaznici: přímá adresa produktu, jinak vyhledávání na e-shopu.
+// (source je zdroj údajů pro administraci – často jen kategorie.)
+// Hledá se search_term, jinak název bez dovětku za pomlčkou – kratší dotaz najde spíš.
+export function customerLink(product, searchUrl) {
+  if (product.product_url) return product.product_url;
+  const term = product.search_term || product.name.split(' – ')[0].trim();
+  return searchUrl + encodeURIComponent(term);
+}
