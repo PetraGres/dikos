@@ -1,8 +1,8 @@
 // Offline cache. Při změně souborů zvyš číslo verze.
-const CACHE = 'nehtik-v7';
+const CACHE = 'nehtik-v8';
 const FILES = [
   './', 'index.html', 'styles.css', 'app.js', 'logic.js', 'config.js',
-  'manifest.webmanifest', 'icon.svg', 'data/dikos_nail_guide.json',
+  'manifest.webmanifest', 'icon.svg', 'icon-180.png', 'icon-192.png', 'icon-512.png', 'data/dikos_nail_guide.json',
 ];
 
 self.addEventListener('install', (e) => {
