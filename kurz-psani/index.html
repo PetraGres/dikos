@@ -1,0 +1,834 @@
+<title>Všemi deseti po větru</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: lekce vlevo jako trasa, vpravo pracovní plocha – krajina s turbínou, text, klávesnice QWERTZ */
+:root {
+  --bg: #eaf1ee;
+  --surface: #ffffff;
+  --surface-2: #f4f8f6;
+  --ink: #12302b;
+  --muted: #5a6f68;
+  --line: #d2dfda;
+  --accent: #0d7a69;
+  --accent-ink: #ffffff;
+  --sun: #e2a012;
+  --ok: #1d8648;
+  --err: #c7352b;
+  --err-bg: #fbe3e0;
+  --done: #8aa29a;
+  --sky: #d6ebe6;
+  --hill: #b9d6c8;
+  --hill-2: #9cc4b0;
+  --f-p: #e6d6f3;
+  --f-r: #d5e6fb;
+  --f-m: #d6f1e0;
+  --f-i: #fcebc8;
+  --f-t: #ececec;
+  --font-display: "Unbounded", "Figtree", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1916; --surface: #142420; --surface-2: #1a2d28; --ink: #e2eeea; --muted: #8fa69e; --line: #26392f;
+    --accent: #3cc4a8; --accent-ink: #062019; --sun: #f3bd3a; --ok: #4fd08a; --err: #ff6f62; --err-bg: #3d1b18; --done: #5d756d;
+    --sky: #163430; --hill: #1f4a3d; --hill-2: #275a49;
+    --f-p: #3b2f4a; --f-r: #233a55; --f-m: #21422f; --f-i: #4a3b1d; --f-t: #2c3331;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1916; --surface: #142420; --surface-2: #1a2d28; --ink: #e2eeea; --muted: #8fa69e; --line: #26392f;
+  --accent: #3cc4a8; --accent-ink: #062019; --sun: #f3bd3a; --ok: #4fd08a; --err: #ff6f62; --err-bg: #3d1b18; --done: #5d756d;
+  --sky: #163430; --hill: #1f4a3d; --hill-2: #275a49;
+  --f-p: #3b2f4a; --f-r: #233a55; --f-m: #21422f; --f-i: #4a3b1d; --f-t: #2c3331;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.app { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 16px 40px; display: grid; gap: 16px; }
+
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.brand h1 { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+.brand span { color: var(--muted); font-size: .9rem; }
+.top-tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: .85rem; font-variant-numeric: tabular-nums; }
+.pill b { font-weight: 700; }
+button.pill { cursor: pointer; }
+button.pill:hover { border-color: var(--accent); }
+
+.layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 20px; align-items: start; }
+
+/* Trasa lekcí */
+.lessons { display: grid; gap: 2px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); max-height: calc(100vh - 40px); overflow-y: auto; padding-right: 4px; }
+.lessons h2 { font-size: .72rem; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); margin: 12px 8px 4px; font-weight: 600; }
+.lessons h2:first-child { margin-top: 0; }
+.les { display: grid; grid-template-columns: 26px minmax(0,1fr) auto; align-items: center; gap: 8px; text-align: left; background: none; border: 0; padding: 7px 8px; border-radius: 8px; cursor: pointer; }
+.les:hover { background: var(--surface-2); }
+.les[aria-current="true"] { background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+.les .n { font-family: var(--font-mono); font-size: .78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.les .t { font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.les .st { font-size: .75rem; letter-spacing: 1px; color: var(--line); }
+.les .st i { font-style: normal; color: var(--sun); }
+
+/* Pracovní plocha */
+.practice { display: grid; gap: 14px; min-width: 0; }
+.lesson-head { display: grid; gap: 4px; }
+.eyebrow { font-size: .75rem; text-transform: uppercase; letter-spacing: .09em; color: var(--accent); font-weight: 600; }
+.lesson-head h2 { font-family: var(--font-display); font-weight: 500; font-size: 1.5rem; margin: 0; text-wrap: balance; line-height: 1.25; }
+.lesson-head p { margin: 0; color: var(--muted); max-width: 68ch; }
+.newkeys { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.newkeys kbd { font-family: var(--font-mono); font-size: .95rem; min-width: 30px; text-align: center; padding: 3px 8px; border-radius: 6px; background: var(--surface); border: 1px solid var(--line); border-bottom-width: 3px; }
+
+.dash { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 14px; align-items: stretch; }
+.scene { background: var(--sky); border-radius: var(--radius); overflow: hidden; display: block; width: 100%; height: auto; max-width: 100%; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; align-content: center; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; display: grid; gap: 2px; min-width: 0; }
+.stat .k { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stat .v { font-family: var(--font-display); font-size: 1.35rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.stat .v small { font-family: var(--font-body); font-size: .8rem; color: var(--muted); font-weight: 500; }
+.progress { grid-column: 1 / -1; height: 8px; background: var(--surface-2); border-radius: 99px; overflow: hidden; border: 1px solid var(--line); }
+.progress > div { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--sun)); transition: width .15s; }
+
+/* Text k opisu */
+.board { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; cursor: text; }
+.board.shake { animation: shake .18s; }
+@keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.text { font-family: var(--font-mono); font-size: 1.4rem; line-height: 1.9; white-space: pre-wrap; word-break: normal; overflow-wrap: anywhere; max-height: calc(1.9em * 4 + 4px); overflow: hidden; color: var(--ink); }
+.text span { border-radius: 3px; }
+.text .d { color: var(--done); }
+.text .e { color: var(--err); background: var(--err-bg); }
+.text .d.e { color: var(--err); opacity: .75; }
+.text .c { background: var(--accent); color: var(--accent-ink); box-shadow: 0 0 0 2px var(--accent); }
+.text .c.e { background: var(--err); color: #fff; box-shadow: 0 0 0 2px var(--err); }
+.cover { position: absolute; inset: 0; display: grid; place-items: center; background: color-mix(in srgb, var(--surface) 72%, transparent); border-radius: var(--radius); font-weight: 600; color: var(--accent); backdrop-filter: blur(1.5px); }
+.cover span { background: var(--surface); padding: 8px 16px; border-radius: 99px; border: 1px solid var(--accent); }
+.board textarea { position: absolute; left: 0; top: 0; width: 1px; height: 1px; opacity: 0; border: 0; padding: 0; resize: none; font-size: 16px; }
+.board-tools { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 10px; font-size: .82rem; color: var(--muted); }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; font-weight: 600; }
+
+/* Prsty */
+.hint { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.hands { display: flex; gap: 18px; }
+.hand { display: flex; align-items: flex-end; gap: 3px; }
+.hand i { display: block; width: 14px; border-radius: 7px 7px 4px 4px; border: 1px solid var(--line); transition: transform .12s, background .12s; }
+.hand i.on { background: var(--accent) !important; border-color: var(--accent); transform: translateY(-4px); }
+.hint-text { font-size: .95rem; min-width: 0; }
+.hint-text b { color: var(--accent); }
+
+/* Klávesnice */
+.kb { display: grid; grid-template-columns: repeat(60, minmax(0, 1fr)); gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px; user-select: none; }
+.key { position: relative; height: 46px; border-radius: 6px; border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); border-bottom-width: 3px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: var(--font-mono); font-size: .95rem; line-height: 1.05; transition: transform .06s, background .1s; min-width: 0; overflow: hidden; }
+.key .s { font-size: .62rem; color: var(--muted); }
+.key .w { font-family: var(--font-body); font-size: .68rem; color: var(--muted); }
+.key.blank { border: 0; background: none !important; }
+.key.bump::after { content: ""; position: absolute; bottom: 5px; width: 10px; height: 2px; border-radius: 2px; background: currentColor; opacity: .55; }
+.fp { background: var(--f-p); } .fr { background: var(--f-r); } .fm { background: var(--f-m); } .fi { background: var(--f-i); } .ft { background: var(--f-t); }
+.key.tgt { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); transform: translateY(-2px); }
+.key.tgt .s, .key.tgt .w { color: var(--accent-ink); }
+.key.tgt2 { box-shadow: 0 0 0 2px var(--accent) inset; }
+.key .badge { position: absolute; top: 2px; right: 4px; font-family: var(--font-body); font-size: .6rem; font-weight: 700; }
+.key.press { transform: translateY(2px); border-bottom-width: 1px; }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: .78rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; border: 1px solid var(--line); }
+
+/* Toast */
+.toast { position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 18px); transform: translate(-50%, -140%); background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 99px; font-weight: 600; transition: transform .3s cubic-bezier(.2,1.4,.4,1); z-index: 30; white-space: nowrap; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis; }
+.toast.show { transform: translate(-50%, 0); }
+
+/* Výsledek */
+.modal { position: fixed; inset: 0; display: grid; place-items: center; background: color-mix(in srgb, var(--bg) 65%, transparent); backdrop-filter: blur(3px); z-index: 20; padding: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 28px; width: min(440px, 100%); display: grid; gap: 14px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.18); }
+.card h3 { font-family: var(--font-display); font-weight: 700; font-size: 1.6rem; margin: 0; text-wrap: balance; }
+.card p { margin: 0; color: var(--muted); }
+.stars { display: flex; justify-content: center; gap: 8px; }
+.stars svg { width: 46px; height: 46px; }
+.stars svg.on { animation: pop .45s backwards; }
+.stars svg:nth-child(2) { animation-delay: .15s; } .stars svg:nth-child(3) { animation-delay: .3s; }
+@keyframes pop { 0% { transform: scale(0) rotate(-40deg); } 70% { transform: scale(1.25); } 100% { transform: scale(1); } }
+.res { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.res div { background: var(--surface-2); border-radius: 8px; padding: 8px; display: grid; }
+.res b { font-family: var(--font-display); font-weight: 500; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.res span { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.btn { border: 1px solid var(--line); background: var(--surface); padding: 10px 18px; border-radius: 99px; cursor: pointer; font-weight: 600; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.fact { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; }
+
+#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 25; }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .lessons { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; padding-bottom: 6px; }
+  .lessons h2 { display: none; }
+  .les { grid-template-columns: auto auto; flex: 0 0 auto; border: 1px solid var(--line); background: var(--surface); }
+  .les .st { display: none; }
+  .les .t { max-width: 160px; }
+}
+@media (max-width: 640px) {
+  .dash { grid-template-columns: minmax(0, 1fr); }
+  .scene { max-height: 110px; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .text { font-size: 1.12rem; }
+  .board { padding: 14px; }
+  .key { height: 36px; font-size: .78rem; border-radius: 4px; }
+  .key .s, .key .w { font-size: .5rem; }
+  .kb { gap: 2px; padding: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <h1>Všemi deseti po větru</h1>
+      <span>kurz psaní na české klávesnici QWERTZ</span>
+    </div>
+    <div class="top-tools">
+      <span class="pill" title="Každý správný úhoz vyrobí 1 kWh">Vyrobeno celkem <b id="totalKwh">0</b> kWh</span>
+      <button class="pill" id="soundBtn" type="button">Zvuk: vše</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="lessons" id="lessons" aria-label="Lekce"></nav>
+
+    <main class="practice">
+      <section class="lesson-head">
+        <div class="eyebrow" id="eyebrow"></div>
+        <h2 id="lTitle"></h2>
+        <p id="lDesc"></p>
+        <div class="newkeys" id="lKeys"></div>
+      </section>
+
+      <section class="dash">
+        <svg class="scene" id="scene" viewBox="0 0 230 120" role="img" aria-label="Větrná elektrárna se točí podle tvé rychlosti, slunce svítí podle přesnosti">
+          <circle id="sunGlow" cx="44" cy="34" r="26" fill="var(--sun)" opacity=".25"></circle>
+          <circle cx="44" cy="34" r="14" fill="var(--sun)"></circle>
+          <path d="M0 92 Q 50 70 110 86 T 230 78 V120 H0Z" fill="var(--hill)"></path>
+          <path d="M0 104 Q 70 88 140 100 T 230 96 V120 H0Z" fill="var(--hill-2)"></path>
+          <g fill="var(--accent)" opacity=".85">
+            <path d="M18 108 l20 0 l-6 -10 l-20 0z"></path>
+            <path d="M42 108 l20 0 l-6 -10 l-20 0z"></path>
+            <path d="M66 108 l20 0 l-6 -10 l-20 0z"></path>
+          </g>
+          <path d="M163 104 L166 40 L168 40 L171 104Z" fill="var(--surface)" stroke="var(--muted)" stroke-width=".6"></path>
+          <g id="rotor">
+            <path d="M167 40 L163.5 6 Q167 2 170.5 6Z" fill="var(--surface)" stroke="var(--muted)" stroke-width=".6"></path>
+            <path d="M167 40 L163.5 6 Q167 2 170.5 6Z" fill="var(--surface)" stroke="var(--muted)" stroke-width=".6" transform="rotate(120 167 40)"></path>
+            <path d="M167 40 L163.5 6 Q167 2 170.5 6Z" fill="var(--surface)" stroke="var(--muted)" stroke-width=".6" transform="rotate(240 167 40)"></path>
+            <circle cx="167" cy="40" r="3.2" fill="var(--accent)"></circle>
+          </g>
+          <path d="M203 104 L204.6 66 L205.6 66 L207 104Z" fill="var(--surface)" stroke="var(--muted)" stroke-width=".5" opacity=".8"></path>
+          <g id="rotor2" opacity=".8">
+            <path d="M205 66 L203 46 Q205 44 207 46Z" fill="var(--surface)" stroke="var(--muted)" stroke-width=".5"></path>
+            <path d="M205 66 L203 46 Q205 44 207 46Z" fill="var(--surface)" stroke="var(--muted)" stroke-width=".5" transform="rotate(120 205 66)"></path>
+            <path d="M205 66 L203 46 Q205 44 207 46Z" fill="var(--surface)" stroke="var(--muted)" stroke-width=".5" transform="rotate(240 205 66)"></path>
+          </g>
+        </svg>
+        <div class="stats">
+          <div class="stat"><span class="k">Rychlost</span><span class="v" id="sCpm">0 <small>úh/min</small></span></div>
+          <div class="stat"><span class="k">Přesnost</span><span class="v" id="sAcc">100 <small>%</small></span></div>
+          <div class="stat"><span class="k">Chyby</span><span class="v" id="sErr">0</span></div>
+          <div class="stat"><span class="k">Série</span><span class="v" id="sStreak">0</span></div>
+          <div class="progress" aria-hidden="true"><div id="prog"></div></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="board" id="board">
+          <div class="text" id="text" aria-live="off"></div>
+          <div class="cover" id="cover"><span>Klikni sem a začni psát</span></div>
+          <textarea id="ta" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Pole pro psaní"></textarea>
+        </div>
+        <div class="board-tools">
+          <span>Chybu není třeba mazat, stačí napsat správný znak. <b>Esc</b> začne lekci znovu.</span>
+          <button class="linkbtn" id="restartBtn" type="button">Začít znovu</button>
+        </div>
+      </section>
+
+      <div class="hint">
+        <div class="hands" aria-hidden="true">
+          <div class="hand" id="handL"></div>
+          <div class="hand" id="handR"></div>
+        </div>
+        <div class="hint-text" id="hintText"></div>
+      </div>
+
+      <div class="kb" id="kb" aria-hidden="true"></div>
+      <div class="legend">
+        <span><i class="fp"></i>malíček</span>
+        <span><i class="fr"></i>prsteníček</span>
+        <span><i class="fm"></i>prostředníček</span>
+        <span><i class="fi"></i>ukazováček</span>
+        <span><i class="ft"></i>palec</span>
+        <span>Výstupky na F a J ukazují základní polohu ukazováčků.</span>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<div class="modal" id="modal" hidden>
+  <div class="card" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <div class="stars" id="mStars"></div>
+    <h3 id="mTitle"></h3>
+    <p id="mMsg"></p>
+    <div class="res">
+      <div><b id="mCpm">0</b><span>úhozů/min</span></div>
+      <div><b id="mAcc">0 %</b><span>přesnost</span></div>
+      <div><b id="mKwh">0</b><span>kWh</span></div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="mAgain" type="button">Znovu</button>
+      <button class="btn primary" id="mNext" type="button">Další lekce ↵</button>
+    </div>
+    <div class="fact" id="mFact"></div>
+  </div>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- Klávesnice CZ QWERTZ (ISO) ---------- */
+const K = (code, base, shift, w) => ({ code, base, shift: shift || '', w: w || 1 });
+const ROWS = [
+  [K('Backquote',';','°'),K('Digit1','+','1'),K('Digit2','ě','2'),K('Digit3','š','3'),K('Digit4','č','4'),K('Digit5','ř','5'),K('Digit6','ž','6'),K('Digit7','ý','7'),K('Digit8','á','8'),K('Digit9','í','9'),K('Digit0','é','0'),K('Minus','=','%'),K('Equal','´','ˇ'),K('Backspace','⌫','',2)],
+  [K('Tab','Tab','',1.5),K('KeyQ','q','Q'),K('KeyW','w','W'),K('KeyE','e','E'),K('KeyR','r','R'),K('KeyT','t','T'),K('KeyY','z','Z'),K('KeyU','u','U'),K('KeyI','i','I'),K('KeyO','o','O'),K('KeyP','p','P'),K('BracketLeft','ú','/'),K('BracketRight',')','('),K('Enter','Enter','',1.5)],
+  [K('CapsLock','Caps','',1.75),K('KeyA','a','A'),K('KeyS','s','S'),K('KeyD','d','D'),K('KeyF','f','F'),K('KeyG','g','G'),K('KeyH','h','H'),K('KeyJ','j','J'),K('KeyK','k','K'),K('KeyL','l','L'),K('Semicolon','ů','"'),K('Quote','§','!'),K('Backslash','¨',"'"),K('Enter2','↵','',1.25)],
+  [K('ShiftLeft','Shift','',1.25),K('IntlBackslash','\\','|'),K('KeyZ','y','Y'),K('KeyX','x','X'),K('KeyC','c','C'),K('KeyV','v','V'),K('KeyB','b','B'),K('KeyN','n','N'),K('KeyM','m','M'),K('Comma',',','?'),K('Period','.',':'),K('Slash','-','_'),K('ShiftRight','Shift','',2.75)],
+  [K('_b1','','',4),K('Space','mezerník','',7),K('_b2','','',4)]
+];
+const FINGER = {};
+const setF = (f, codes) => codes.split(' ').forEach(c => FINGER[c] = f);
+setF('LP', 'Backquote Digit1 Tab KeyQ CapsLock KeyA ShiftLeft IntlBackslash KeyZ');
+setF('LR', 'Digit2 KeyW KeyS KeyX');
+setF('LM', 'Digit3 KeyE KeyD KeyC');
+setF('LI', 'Digit4 Digit5 KeyR KeyT KeyF KeyG KeyV KeyB');
+setF('RI', 'Digit6 Digit7 KeyY KeyU KeyH KeyJ KeyN KeyM');
+setF('RM', 'Digit8 KeyI KeyK Comma');
+setF('RR', 'Digit9 KeyO KeyL Period');
+setF('RP', 'Digit0 Minus Equal Backspace KeyP BracketLeft BracketRight Enter Enter2 Semicolon Quote Backslash Slash ShiftRight');
+setF('TH', 'Space');
+const FNAME = { LP: 'levý malíček', LR: 'levý prsteníček', LM: 'levý prostředníček', LI: 'levý ukazováček', RI: 'pravý ukazováček', RM: 'pravý prostředníček', RR: 'pravý prsteníček', RP: 'pravý malíček', TH: 'palec' };
+const FCLASS = { LP: 'fp', RP: 'fp', LR: 'fr', RR: 'fr', LM: 'fm', RM: 'fm', LI: 'fi', RI: 'fi', TH: 'ft' };
+const HOME = { LP: 'a', LR: 's', LM: 'd', LI: 'f', RI: 'j', RM: 'k', RR: 'l', RP: 'ů' };
+
+const BASE = {}, SHIFT = {};
+ROWS.flat().forEach(k => {
+  if (k.base.length === 1) BASE[k.base] = k.code;
+  if (k.shift.length === 1) SHIFT[k.shift] = k.code;
+});
+const DEAD = { '́': { code: 'Equal', shift: false, label: '´' }, '̌': { code: 'Equal', shift: true, label: 'ˇ' } };
+
+function plainSteps(c) {
+  if (c === ' ') return [{ code: 'Space', shift: false, ch: 'mezerník' }];
+  if (BASE[c]) return [{ code: BASE[c], shift: false, ch: c }];
+  if (SHIFT[c]) return [{ code: SHIFT[c], shift: true, ch: c }];
+  return null;
+}
+function charSteps(c) {
+  const p = plainSteps(c);
+  if (p) return p;
+  const nfd = c.normalize('NFD');
+  if (nfd.length === 2 && DEAD[nfd[1]]) {
+    const d = DEAD[nfd[1]];
+    const rest = plainSteps(nfd[0]);
+    if (rest) return [{ code: d.code, shift: d.shift, ch: d.label, dead: true }, ...rest];
+  }
+  return [];
+}
+const shiftFor = code => (FINGER[code] || 'L')[0] === 'L' ? 'ShiftRight' : 'ShiftLeft';
+
+/* ---------- Slova ---------- */
+const THEME = `jas les lesk led drak sad sklad kabel kabely vítr větru větrná větrné větrník elektrárna elektrárny slunce sluneční solární panel panely
+fotovoltaika oblast oblasti akcelerační zóna krajina mapa plán změna obec obce starosta zákon řízení povolení stavba investor ochrana příroda louka pole
+střecha energie síť kraj vláda klima emise uhlík výkon turbína rotor stožár lopatka hluk studie posouzení stanovisko podmínky opatření vymezení výroba
+spotřeba rychle rychlost zrychlení lhůta úřad území územní rozvoj směrnice data veřejnost připomínka pozemek projekt teplo baterie vodík zdroj zdroje
+obnovitelné čistá vzduch ptáci netopýři voda proud napětí trafo sloup kopec mrak nebe světlo foton watt kilowatt megawatt vlna fáze dráty tok ráz
+koncepce záměr plocha hodnocení podmínka poplatek region akumulace síla jih sever západ východ fouká svítí točí mlýn plachta vrtule stavební
+dokumentace lokalita unie cíl cíle plány jasu sílu teče kolo osa osy stín stíny fouk sluníčko listí tráva kabelu`.split(/\s+/);
+const COMMON = `a i k s v z o u je jak kde tak ale asi dal kal lak klas jsi jsem sedla jedle jedl kdesi idea sled sledi ruka sud dar dur hrad hlad had
+guma tuk test testy zuby kolo okno pes pero top poleva nos nové nový vlak vlek med moc máme cesta celek bod body byt byl byla box fax taxi web kvíz
+dáma dívka den dnes zase ještě ano ne proto potom místo malý velký hodně krásný den noc ráno večer týden měsíc rok léto zima jaro podzim
+šest sedm osm devět deset sto tisíc šance čas část čerstvý řeka žena muž dítě úsměv dům ůl? kůň stůl můj tvůj ďábel loďka ťuk píseň kůra`.split(/\s+/).filter(w => !w.includes('?'));
+const THEME_SET = new Set(THEME);
+const BANK = [...new Set([...THEME, ...COMMON])];
+
+const NAMES = 'AOV AOS MMR MŽP SEA EIA ÚRP OZE Evropa Praha Brno Ostrava Plzeň Liberec Olomouc Jihlava Zlín Vysočina Krkonoše Šumava Říp Žďár Ústí Česko Morava Slezsko Pálava Beskydy Jeseníky'.split(' ');
+
+/* ---------- Lekce ---------- */
+const LESSONS = [
+  { g: 'Základní řada', keys: 'asdfjklů', title: 'Základní postoj', desc: 'Ukazováčky nahmatej na F a J (mají výstupky). Ostatní prsty leží vedle: levá ruka A S D F, pravá J K L Ů. Palce odpočívají na mezerníku.', target: 50 },
+  { keys: 'ei', title: 'E a I', desc: 'Prostředníčky vyjedou nahoru a vrátí se domů na D a K. Jako lopatka turbíny: ven a zpět.', target: 60 },
+  { keys: 'ru', title: 'R a U', desc: 'Ukazováčky šplhají nahoru na R a U. Ostatní prsty zůstávají v klidu na základní řadě.', target: 60 },
+  { keys: 'gh', title: 'G a H', desc: 'Ukazováčky se natáhnou do středu klávesnice. G patří levé ruce, H pravé.', target: 60 },
+  { g: 'Horní a dolní řada', keys: 'tz', title: 'T a Z', desc: 'Na české klávesnici je Z vpravo od T, protože jde o rozložení QWERTZ. Obě píšou ukazováčky.', target: 70 },
+  { keys: 'op', title: 'O a P', desc: 'Prsteníček píše O, malíček P. Pomalu a přesně, rychlost přijde sama.', target: 70 },
+  { keys: 'nv', title: 'N a V', desc: 'Ukazováčky sjedou dolů: levý na V, pravý na N.', target: 70 },
+  { keys: 'mc', title: 'M a C', desc: 'M píše pravý ukazováček, C levý prostředníček.', target: 75 },
+  { keys: 'by', title: 'B a Y', desc: 'B je levý ukazováček. Y najdeš vlevo dole pod A, píše ho levý malíček.', target: 75 },
+  { keys: 'xwq', title: 'X, W a Q', desc: 'Méně častá písmena: X a W píše levý prsteníček, Q levý malíček.', target: 75 },
+  { keys: ',.-', title: 'Čárka, tečka, pomlčka', desc: 'Čárku píše pravý prostředníček, tečku prsteníček a pomlčku malíček. Za čárkou a tečkou následuje mezera.', target: 75 },
+  { g: 'Česká diakritika', keys: 'ěščřž', title: 'Háčky: ě š č ř ž', desc: 'Na české klávesnici jsou písmena s háčkem přímo v horní řadě. Každý prst si vezme tu svou: ě prsteníček, š prostředníček, č a ř levý ukazováček, ž pravý.', target: 80 },
+  { keys: 'ýáíé', title: 'Čárky: ý á í é', desc: 'Pokračujeme horní řadou doprava: ý pravý ukazováček, á prostředníček, í prsteníček, é malíček.', target: 80 },
+  { keys: 'úůťďňó', title: 'Ú, Ů a mrtvé klávesy', desc: 'Ú a Ů píše pravý malíček. Pro ť, ď, ň a ó nejdřív stiskni háček (Shift + ´) nebo čárku (´) a pak písmeno.', target: 80 },
+  { g: 'Shift a čísla', keys: '⇧', title: 'Velká písmena', desc: 'Shift drží malíček druhé ruky, než kterou píšeš písmeno. Velké Č, Ž nebo Ú napíšeš přes mrtvou klávesu: nejdřív ˇ nebo ´, pak Shift a písmeno.', target: 70, gen: 'upper' },
+  { keys: '1–0', title: 'Čísla, paragrafy a zákony', desc: 'Číslice jsou na české klávesnici pod Shiftem v horní řadě. Lomítko je Shift + ú, procento Shift + =, paragraf je vedle ů.', target: 60, gen: 'numbers' },
+  { g: 'Texty o akceleračních oblastech', title: 'Co jsou akcelerační oblasti', desc: 'Souvislý text. Teď už píšeš celé věty.', target: 110,
+    text: 'Akcelerační oblasti jsou území, kde lze větrné a fotovoltaické elektrárny povolovat ve zrychleném režimu. Pro větrné elektrárny se používá zkratka AOV, pro solární AOS. Elektrárny bude možné stavět i mimo tyto oblasti, ale bez zrychleného režimu.' },
+  { title: 'Změna č. 2 ÚRP', desc: 'Kdo oblasti vymezil a odkdy platí.', target: 110,
+    text: 'Akcelerační oblasti celostátního významu vymezuje Změna č. 2 Územního rozvojového plánu, kterou pořídilo MMR. Vláda ji schválila usnesením ze dne 27. 7. 2026 č. 493. Změna nabyla účinnosti dne 25. 8. 2026.' },
+  { title: 'Stanovisko SEA', desc: 'Co k Změně č. 2 udělalo MŽP.', target: 110,
+    text: 'MŽP vydalo ke Změně č. 2 souhlasné stanovisko SEA dne 10. 7. 2026 pod č. j. MZP/2026/910/2356. V informačním systému SEA je koncepce vedena pod kódem MZP006D. Stanovisko mimo jiné uložilo zpracovat detailní hlukovou studii a posoudit tzv. flicker efekt.' },
+  { title: 'Vymezení není povolení', desc: 'Nejčastější nedorozumění, napsané vlastními prsty.', target: 115,
+    text: 'Vymezení akcelerační oblasti neznamená povolení výstavby. Investor musí získat práva k pozemkům, zpracovat projektovou dokumentaci a projít stavebním řízením. Obec je účastníkem řízení o povolení záměru a v řízení se posuzují veřejné zájmy i námitky účastníků.' },
+  { title: 'Příroda a podmínky', desc: 'Kde oblast být nemůže a co platí uvnitř.', target: 115,
+    text: 'Podle § 4 odst. 1 zákona č. 249/2025 Sb. nelze akcelerační oblast vymezit na území evropsky významné lokality. Pro každou akcelerační oblast bylo současně se Změnou č. 2 schváleno územní opatření o podmínkách a zmírňujících opatřeních.' },
+  { title: 'Hluk a obce', desc: 'Kdo hlídá limity a kam jde poplatek.', target: 120,
+    text: 'Dodržení hygienických limitů hluku u konkrétního záměru posuzuje krajská hygienická stanice v povolovacím řízení. Zákon č. 249/2025 Sb. upravuje u větrných elektráren poplatek, jehož výnos připadá převážně dotčeným obcím.' }
+];
+
+const FACTS = [
+  'Akcelerační oblasti pro vítr se zkracují jako AOV, pro slunce jako AOS.',
+  'Vymezení akcelerační oblasti neznamená povolení výstavby.',
+  'Stanovisko SEA ke Změně č. 2 ÚRP vydalo MŽP 10. 7. 2026.',
+  'Vláda schválila Změnu č. 2 ÚRP usnesením ze dne 27. 7. 2026 č. 493.',
+  'Změna č. 2 ÚRP nabyla účinnosti 25. 8. 2026.',
+  'Na území evropsky významné lokality nelze akcelerační oblast vymezit.',
+  'Stanovisko SEA uložilo zpracovat detailní hlukovou studii a posoudit flicker efekt.',
+  'Obec je účastníkem řízení o povolení záměru.',
+  'Elektrárny lze stavět i mimo akcelerační oblasti, jen bez zrychleného režimu.'
+];
+
+// kumulativní sady znaků
+let acc = '';
+LESSONS.forEach(L => {
+  if (L.keys && !L.gen && !L.text) acc += L.keys;
+  L.allowed = new Set([...acc, ' ']);
+});
+
+const rnd = n => Math.floor(Math.random() * n);
+const pick = a => a[rnd(a.length)];
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+function generate(L) {
+  if (L.text) return L.text;
+  if (L.gen === 'upper') {
+    const caps = THEME.filter(w => w.length > 2).map(w => w[0].toUpperCase() + w.slice(1));
+    const out = [];
+    for (let i = 0; i < 18; i++) out.push(i % 2 ? pick(NAMES) : pick(caps));
+    return out.join(' ');
+  }
+  if (L.gen === 'numbers') {
+    const items = ['zákon č. 249/2025 Sb.', '27. 7. 2026', 'usnesení č. 493', '25. 8. 2026', '10. 7. 2026', '§ 4 odst. 1', '50 MW', '100 %', 'MZP006D', 'kraj 14', 'výkon 3,6 MW', '(SEA)', 'MZP/2026/910/2356', '§ 5', 'změna č. 2', 'cíl 2030'];
+    return shuffle(items.slice()).slice(0, 10).join(' ');
+  }
+  const newKeys = [...L.keys];
+  const allowed = L.allowed;
+  const words = BANK.filter(w => [...w].every(c => allowed.has(c)));
+  const withNew = words.filter(w => newKeys.some(k => w.includes(k)));
+  const pool = [];
+  words.forEach(w => {
+    let wt = 1;
+    if (THEME_SET.has(w)) wt += 3;
+    if (withNew.includes(w)) wt += 3;
+    for (let i = 0; i < wt; i++) pool.push(w);
+  });
+  const tokens = [];
+  const letters = newKeys.filter(k => /\p{L}/u.test(k));
+  // nácvik nových kláves s domovskou klávesou téhož prstu
+  letters.forEach(k => {
+    const st = charSteps(k);
+    const home = HOME[FINGER[st[st.length - 1].code]] || 'f';
+    tokens.push(k + k + k, home === k ? k + ' ' + k : home + k + home);
+  });
+  if (L === LESSONS[0]) tokens.push('asdf', 'jklů', 'fjfj', 'dkdk', 'slsl', 'aůaů');
+  const nWords = 16;
+  let last = '';
+  for (let i = 0; i < nWords; i++) {
+    let w;
+    if (pool.length >= 4) { do { w = pick(pool); } while (w === last); }
+    else {
+      const chars = [...allowed].filter(c => c !== ' ');
+      w = Array.from({ length: 3 + rnd(3) }, (_, j) => j === 0 && letters.length ? pick(letters) : pick(chars)).join('');
+    }
+    last = w;
+    tokens.push(w);
+  }
+  let out = shuffle(tokens.slice(letters.length * 2 + (L === LESSONS[0] ? 6 : 0)));
+  out = tokens.slice(0, letters.length * 2 + (L === LESSONS[0] ? 6 : 0)).concat(out);
+  if (allowed.has(',')) {
+    out = out.map((w, i) => i === out.length - 1 ? w + '.' : (Math.random() < .18 ? w + ',' : Math.random() < .12 ? w + '.' : w));
+    for (let i = 3; i < out.length; i += 6) out.splice(i, 0, '-');
+  }
+  return out.join(' ');
+}
+
+/* ---------- Uložení postupu ---------- */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('vdpv:' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('vdpv:' + k, JSON.stringify(v)); } catch (e) {} }
+};
+let progress = store.get('progress', {});
+let totalKwh = store.get('kwh', 0);
+let soundMode = store.get('sound', 2);
+
+/* ---------- Zvuk ---------- */
+let actx = null;
+function ac() {
+  if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } }
+  if (actx.state === 'suspended') actx.resume();
+  return actx;
+}
+function tone(f, dur, type, gain, when) {
+  const a = ac(); if (!a) return;
+  const t = a.currentTime + (when || 0);
+  const o = a.createOscillator(), g = a.createGain();
+  o.type = type || 'sine'; o.frequency.setValueAtTime(f, t);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(gain || 0.06, t + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(a.destination);
+  o.start(t); o.stop(t + dur + 0.03);
+}
+const sfx = {
+  key() { if (soundMode >= 2) tone(1100 + Math.random() * 250, .035, 'triangle', .025); },
+  err() { if (soundMode >= 2) { tone(160, .14, 'square', .045); tone(120, .14, 'square', .03, .05); } },
+  streak() { if (soundMode >= 1) [523, 659, 784, 1047].forEach((f, i) => tone(f, .2, 'triangle', .07, i * .07)); },
+  win(stars) {
+    if (soundMode < 1) return;
+    const seq = stars >= 3 ? [523, 659, 784, 1047, 784, 1047, 1319] : stars >= 1 ? [523, 659, 784, 1047] : [392, 349, 330];
+    seq.forEach((f, i) => tone(f, i === seq.length - 1 ? .5 : .18, 'triangle', .08, i * .12));
+    if (stars >= 3) [1047, 1319, 1568].forEach(f => tone(f, .8, 'sine', .04, seq.length * .12));
+  }
+};
+const SOUND_LABEL = ['Zvuk: vypnuto', 'Zvuk: jen oslavy', 'Zvuk: vše'];
+
+/* ---------- DOM ---------- */
+const $ = id => document.getElementById(id);
+const els = { text: $('text'), ta: $('ta'), board: $('board'), cover: $('cover'), kb: $('kb'), hint: $('hintText') };
+const keyEls = {};
+
+ROWS.forEach(row => row.forEach(k => {
+  const d = document.createElement('div');
+  d.style.gridColumn = 'span ' + Math.round(k.w * 4);
+  if (k.code.startsWith('_')) { d.className = 'key blank'; els.kb.appendChild(d); return; }
+  d.className = 'key ' + (FCLASS[FINGER[k.code]] || 'ft');
+  if (k.code === 'KeyF' || k.code === 'KeyJ') d.classList.add('bump');
+  const isLetter = k.base.length === 1 && k.shift === k.base.toUpperCase() && k.base !== k.shift;
+  if (k.base.length > 1) d.innerHTML = '<span class="w">' + k.base + '</span>';
+  else if (isLetter) d.innerHTML = '<span>' + k.base + '</span>';
+  else d.innerHTML = '<span class="s">' + (k.shift || '&nbsp;') + '</span><span>' + k.base + '</span>';
+  keyEls[k.code] = d;
+  els.kb.appendChild(d);
+}));
+
+const HAND_ORDER = { L: ['LP', 'LR', 'LM', 'LI', 'TH'], R: ['TH', 'RI', 'RM', 'RR', 'RP'] };
+const HAND_H = { P: 22, R: 30, M: 34, I: 30, T: 16 };
+const fingerEls = { L: {}, R: {} };
+['L', 'R'].forEach(h => HAND_ORDER[h].forEach(f => {
+  const i = document.createElement('i');
+  i.className = FCLASS[f];
+  i.style.height = HAND_H[f === 'TH' ? 'T' : f[1]] + 'px';
+  fingerEls[h][f] = i;
+  $('hand' + h).appendChild(i);
+}));
+
+/* ---------- Seznam lekcí ---------- */
+function renderLessons() {
+  const nav = $('lessons');
+  nav.innerHTML = '';
+  LESSONS.forEach((L, i) => {
+    if (L.g) { const h = document.createElement('h2'); h.textContent = L.g; nav.appendChild(h); }
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'les';
+    b.setAttribute('aria-current', i === cur ? 'true' : 'false');
+    const s = (progress[i] && progress[i].stars) || 0;
+    b.innerHTML = '<span class="n">' + String(i + 1).padStart(2, '0') + '</span><span class="t"></span><span class="st" aria-label="' + s + ' ze 3 hvězd">' + '<i>★</i>'.repeat(s) + '★'.repeat(3 - s) + '</span>';
+    b.querySelector('.t').textContent = L.title;
+    b.addEventListener('click', () => { load(i); els.ta.focus(); });
+    nav.appendChild(b);
+  });
+}
+
+/* ---------- Stav lekce ---------- */
+let cur = Math.min(store.get('cur', 0), LESSONS.length - 1);
+let S = null;
+
+function load(i) {
+  cur = i; store.set('cur', i);
+  const L = LESSONS[i];
+  const text = generate(L).replace(/\s+/g, ' ').trim();
+  S = { text, pos: 0, correct: 0, errors: 0, errAt: new Set(), streak: 0, best: 0, start: 0, end: 0, times: [], done: false, kwh: 0 };
+  $('eyebrow').textContent = 'Lekce ' + (i + 1) + ' z ' + LESSONS.length + (L.text ? ' · souvislý text' : L.gen ? '' : ' · nové klávesy');
+  $('lTitle').textContent = L.title;
+  $('lDesc').textContent = L.desc;
+  const nk = $('lKeys'); nk.innerHTML = '';
+  if (L.keys && !L.gen) [...L.keys].forEach(c => { const k = document.createElement('kbd'); k.textContent = c; nk.appendChild(k); });
+  els.text.innerHTML = '';
+  [...text].forEach(c => { const s = document.createElement('span'); s.textContent = c; els.text.appendChild(s); });
+  els.text.scrollTop = 0;
+  renderLessons();
+  paint();
+  updateStats();
+}
+
+function paint() {
+  const spans = els.text.children;
+  for (let i = 0; i < spans.length; i++) {
+    const sp = spans[i];
+    sp.className = (i < S.pos ? 'd' : i === S.pos ? 'c' : '') + (S.errAt.has(i) ? ' e' : '');
+  }
+  const c = spans[S.pos];
+  if (c) {
+    const top = c.offsetTop - els.text.offsetTop;
+    const lh = parseFloat(getComputedStyle(els.text).lineHeight);
+    const line = Math.floor(top / lh);
+    els.text.scrollTop = Math.max(0, (line - 1)) * lh;
+  }
+  highlight();
+}
+
+function highlight() {
+  Object.values(keyEls).forEach(k => { k.classList.remove('tgt', 'tgt2'); const b = k.querySelector('.badge'); if (b) b.remove(); });
+  Object.values(fingerEls.L).concat(Object.values(fingerEls.R)).forEach(f => f.classList.remove('on'));
+  if (!S || S.done || S.pos >= S.text.length) { els.hint.innerHTML = 'Hotovo.'; return; }
+  const ch = S.text[S.pos];
+  const steps = charSteps(ch);
+  const parts = [];
+  steps.forEach((st, idx) => {
+    const el = keyEls[st.code];
+    const f = FINGER[st.code];
+    if (el) {
+      el.classList.add(idx === steps.length - 1 ? 'tgt' : 'tgt2');
+      if (steps.length > 1) { const b = document.createElement('span'); b.className = 'badge'; b.textContent = idx + 1; el.appendChild(b); }
+    }
+    lightFinger(f);
+    let p = '<b>' + esc(st.ch) + '</b> ' + FNAME[f];
+    if (st.shift) {
+      const sc = shiftFor(st.code);
+      keyEls[sc].classList.add('tgt2');
+      lightFinger(FINGER[sc]);
+      p += ' + Shift (' + FNAME[FINGER[sc]] + ')';
+    }
+    parts.push(p);
+  });
+  if (!steps.length) { els.hint.textContent = 'Tento znak napiš, jak umíš.'; return; }
+  els.hint.innerHTML = (steps.length > 1 ? 'Nejdřív ' : 'Další znak: ') + parts.join(', potom ');
+}
+function lightFinger(f) {
+  if (f === 'TH') { fingerEls.L.TH.classList.add('on'); fingerEls.R.TH.classList.add('on'); return; }
+  const el = fingerEls[f[0]][f]; if (el) el.classList.add('on');
+}
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function elapsedMin() {
+  if (!S.start) return 0;
+  return ((S.end || performance.now()) - S.start) / 60000;
+}
+function cpm() { const m = elapsedMin(); return m > 0.02 ? Math.round(S.correct / m) : 0; }
+function accuracy() { const t = S.correct + S.errors; return t ? Math.round((S.correct / t) * 1000) / 10 : 100; }
+
+function updateStats() {
+  $('sCpm').innerHTML = cpm() + ' <small>úh/min</small>';
+  $('sAcc').innerHTML = (accuracy() % 1 ? accuracy().toFixed(1) : accuracy()) + ' <small>%</small>';
+  $('sErr').textContent = S.errors;
+  $('sStreak').textContent = S.streak;
+  $('prog').style.width = (S.pos / S.text.length * 100) + '%';
+  $('totalKwh').textContent = totalKwh.toLocaleString('cs-CZ');
+}
+
+/* ---------- Psaní ---------- */
+const STREAK_MSG = ['Rotor se roztočil!', 'Fouká to!', 'Plný výkon!', 'Slunce svítí naplno!', 'Síť je stabilní!', 'Zrychlený režim!', 'Megawatty tečou!', 'Bez chyby jako po větru!'];
+let streakIdx = 0;
+
+function handleChar(ch) {
+  if (!S || S.done) return;
+  if (ch === '\n' || ch === '\r' || ch === '\t') return;
+  if (ch === ' ') ch = ' ';
+  const now = performance.now();
+  if (!S.start) S.start = now;
+  const exp = S.text[S.pos];
+  if (ch === exp) {
+    S.correct++; S.pos++; S.streak++; S.kwh++; totalKwh++;
+    S.best = Math.max(S.best, S.streak);
+    S.times.push(now);
+    sfx.key();
+    if (S.streak > 0 && S.streak % 40 === 0) {
+      toast(STREAK_MSG[streakIdx++ % STREAK_MSG.length] + ' ' + S.streak + ' bez chyby');
+      sfx.streak();
+      burst(40, true);
+    }
+    if (S.pos >= S.text.length) return finish();
+  } else {
+    S.errors++; S.streak = 0;
+    S.errAt.add(S.pos);
+    sfx.err();
+    els.board.classList.remove('shake'); void els.board.offsetWidth; els.board.classList.add('shake');
+  }
+  paint();
+  updateStats();
+}
+
+function flush() {
+  const v = els.ta.value;
+  els.ta.value = '';
+  for (const ch of v) handleChar(ch);
+}
+els.ta.addEventListener('input', e => { if (e.isComposing) return; flush(); });
+els.ta.addEventListener('compositionend', () => setTimeout(flush, 0));
+els.ta.addEventListener('keydown', e => {
+  const el = keyEls[e.code];
+  if (el) { el.classList.add('press'); setTimeout(() => el.classList.remove('press'), 110); }
+  if (e.key === 'Escape') { e.preventDefault(); load(cur); return; }
+  if (e.key === 'Enter' || e.key === 'Tab') { e.preventDefault(); }
+});
+els.ta.addEventListener('focus', () => { els.cover.hidden = true; ac(); });
+els.ta.addEventListener('blur', () => { els.cover.hidden = false; });
+els.board.addEventListener('click', () => els.ta.focus());
+$('restartBtn').addEventListener('click', () => { load(cur); els.ta.focus(); });
+
+$('soundBtn').textContent = SOUND_LABEL[soundMode];
+$('soundBtn').addEventListener('click', () => {
+  soundMode = (soundMode + 2) % 3;
+  store.set('sound', soundMode);
+  $('soundBtn').textContent = SOUND_LABEL[soundMode];
+  if (soundMode) sfx.streak();
+});
+
+/* ---------- Výsledek ---------- */
+const STAR = on => '<svg viewBox="0 0 24 24" class="' + (on ? 'on' : '') + '"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6L2.5 9.4l6.6-.8z" fill="' + (on ? 'var(--sun)' : 'var(--line)') + '"/></svg>';
+
+function finish() {
+  S.done = true; S.end = performance.now();
+  paint(); updateStats();
+  const L = LESSONS[cur];
+  const a = accuracy(), c = cpm();
+  let stars = a >= 90 ? 1 : 0;
+  if (a >= 95) stars = 2;
+  if (a >= 97 && c >= L.target) stars = 3;
+  const prev = progress[cur] || { stars: 0, cpm: 0, acc: 0 };
+  progress[cur] = { stars: Math.max(prev.stars, stars), cpm: Math.max(prev.cpm, c), acc: Math.max(prev.acc, a) };
+  store.set('progress', progress);
+  store.set('kwh', totalKwh);
+  renderLessons();
+
+  const titles = ['Vítr se teprve zvedá', 'Turbína se točí!', 'Pěkný vítr!', 'Plný výkon!'];
+  const msgs = [
+    'Přesnost pod 90 %. Zpomal a zkus to znovu, rychlost přijde s přesností.',
+    'Lekce zvládnutá. Pro další hvězdu se zaměř na přesnost aspoň 95 %.',
+    'Výborná přesnost. Třetí hvězda čeká při 97 % a rychlosti aspoň ' + L.target + ' úhozů za minutu.',
+    'Tři hvězdy! Rychle, přesně a bez zaváhání. Akcelerace jak má být.'
+  ];
+  $('mStars').innerHTML = [0, 1, 2].map(i => STAR(i < stars)).join('');
+  $('mTitle').textContent = titles[stars];
+  $('mMsg').textContent = msgs[stars] + (prev.stars && c > prev.cpm && prev.cpm ? ' Nový osobní rekord v rychlosti!' : '');
+  $('mCpm').textContent = c;
+  $('mAcc').textContent = (a % 1 ? a.toFixed(1) : a) + ' %';
+  $('mKwh').textContent = S.kwh;
+  $('mFact').textContent = 'Věděli jste? ' + pick(FACTS);
+  $('mNext').hidden = cur >= LESSONS.length - 1;
+  $('mNext').textContent = stars ? 'Další lekce ↵' : 'Přesto dál';
+  $('mAgain').className = stars ? 'btn' : 'btn primary';
+  $('modal').hidden = false;
+  els.ta.blur();
+  ($('mNext').hidden || !stars ? $('mAgain') : $('mNext')).focus();
+  sfx.win(stars);
+  if (stars) burst(stars >= 3 ? 220 : stars * 70, false);
+}
+function closeModal() { $('modal').hidden = true; }
+$('mAgain').addEventListener('click', () => { closeModal(); load(cur); els.ta.focus(); });
+$('mNext').addEventListener('click', () => { closeModal(); load(Math.min(cur + 1, LESSONS.length - 1)); els.ta.focus(); });
+document.addEventListener('keydown', e => {
+  if ($('modal').hidden) return;
+  if (e.key === 'Escape') { e.preventDefault(); $('mAgain').click(); }
+});
+
+/* ---------- Toast ---------- */
+let toastT = 0;
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+/* ---------- Turbína a slunce ---------- */
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const rotor = $('rotor'), rotor2 = $('rotor2'), sunGlow = $('sunGlow');
+let ang = 0, speed = 0, lastT = performance.now();
+function frame(t) {
+  const dt = Math.min(0.1, (t - lastT) / 1000); lastT = t;
+  let recent = 0;
+  if (S && S.times.length) {
+    while (S.times.length && t - S.times[0] > 4000) S.times.shift();
+    recent = S.times.length * 15; // úhozy za minutu za poslední 4 s
+  }
+  const targetSpeed = 12 + recent * 1.6; // °/s, i v klidu se mírně točí
+  speed += (targetSpeed - speed) * Math.min(1, dt * 2);
+  if (!reduce) {
+    ang = (ang + speed * dt) % 360;
+    rotor.setAttribute('transform', 'rotate(' + ang.toFixed(1) + ' 167 40)');
+    rotor2.setAttribute('transform', 'rotate(' + (ang * 0.8 + 40).toFixed(1) + ' 205 66)');
+  }
+  const a = S ? accuracy() : 100;
+  sunGlow.setAttribute('r', (16 + Math.max(0, a - 80) * 0.6).toFixed(1));
+  sunGlow.setAttribute('opacity', (0.12 + Math.max(0, a - 80) / 100).toFixed(2));
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+setInterval(() => { if (S && S.start && !S.done) updateStats(); }, 500);
+
+/* ---------- Konfety ---------- */
+const cv = $('confetti'), cx = cv.getContext('2d');
+let parts = [], running = false;
+function burst(n, small) {
+  if (reduce) n = Math.min(n, 20);
+  const cs = getComputedStyle(document.documentElement);
+  const cols = ['--accent', '--sun', '--ok', '--f-p', '--f-r'].map(v => cs.getPropertyValue(v).trim());
+  const W = cv.width = innerWidth * devicePixelRatio, H = cv.height = innerHeight * devicePixelRatio;
+  for (let i = 0; i < n; i++) {
+    const fromSide = !small && i % 2;
+    parts.push({
+      x: small ? W / 2 : (fromSide ? W : 0), y: small ? H * 0.12 : H * 0.7,
+      vx: small ? (Math.random() - .5) * 14 : (fromSide ? -1 : 1) * (6 + Math.random() * 14),
+      vy: small ? Math.random() * 6 : -(12 + Math.random() * 16),
+      r: Math.random() * Math.PI, vr: (Math.random() - .5) * .4,
+      s: (5 + Math.random() * 7) * devicePixelRatio, c: pick(cols), blade: Math.random() < .3, life: 1
+    });
+  }
+  if (!running) { running = true; requestAnimationFrame(tick); }
+}
+function tick() {
+  const W = cv.width, H = cv.height;
+  cx.clearRect(0, 0, W, H);
+  parts.forEach(p => {
+    p.vy += .45 * devicePixelRatio; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life -= .006;
+    cx.save(); cx.translate(p.x, p.y); cx.rotate(p.r); cx.globalAlpha = Math.max(0, Math.min(1, p.life * 2)); cx.fillStyle = p.c;
+    if (p.blade) { cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(-p.s * .25, -p.s * 1.6); cx.lineTo(p.s * .25, -p.s * 1.6); cx.closePath(); cx.fill(); }
+    else cx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
+    cx.restore();
+  });
+  parts = parts.filter(p => p.y < H + 40 && p.life > 0);
+  if (parts.length) requestAnimationFrame(tick); else { running = false; cx.clearRect(0, 0, W, H); }
+}
+
+load(cur);
+})();
+</script>
