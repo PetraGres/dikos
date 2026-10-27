@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Připravenost na EUDR</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: questionnaire column + sticky live-score panel; executive summary spans full width below. */
+:root {
+  --bg: #f2f5f0; --surface: #ffffff; --ink: #17241d; --muted: #5a6a60; --line: #d5ddd4;
+  --accent: #2f5d46; --accent-soft: #e3ece5; --wood: #a8651f;
+  --crit: #b3261e; --crit-soft: #fbe9e7; --mid: #9a6b00; --mid-soft: #fbf1d9; --ok: #2b7a4b; --ok-soft: #e2f2e7;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1612; --surface: #16201a; --ink: #e5ece6; --muted: #98a99d; --line: #2a3a31;
+  --accent: #82bd9c; --accent-soft: #1d2f25; --wood: #dc9d55;
+  --crit: #f28b82; --crit-soft: #3a1d1b; --mid: #e6b84a; --mid-soft: #33290f; --ok: #74c898; --ok-soft: #173023;
+  color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #0f1612; --surface: #16201a; --ink: #e5ece6; --muted: #98a99d; --line: #2a3a31;
+  --accent: #82bd9c; --accent-soft: #1d2f25; --wood: #dc9d55;
+  --crit: #f28b82; --crit-soft: #3a1d1b; --mid: #e6b84a; --mid-soft: #33290f; --ok: #74c898; --ok-soft: #173023;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.3rem; font-weight: 700; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.eyebrow { font-family: var(--mono); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--wood); }
+.muted { color: var(--muted); }
+
+header.top { display: grid; gap: 10px; margin-bottom: 24px; }
+header.top p { margin: 0; max-width: 68ch; color: var(--muted); }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: .85rem;
+  background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+button { font: inherit; cursor: pointer; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  padding: 7px 14px; font-weight: 600; }
+button:hover { border-color: var(--accent); }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--wood); outline-offset: 2px; }
+.sample { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; padding: 10px 14px;
+  border: 1px dashed var(--wood); border-radius: 10px; color: var(--ink); background: var(--surface); margin-bottom: 20px; }
+
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 28px; align-items: start; }
+@media (max-width: 900px) { .layout { grid-template-columns: minmax(0, 1fr); } .panel { position: static !important; order: -1; } }
+
+form { display: grid; gap: 18px; min-width: 0; }
+fieldset { margin: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 18px 20px 20px; display: grid; gap: 18px; min-width: 0; }
+legend { padding: 0 6px; margin-left: -6px; }
+legend h2 { display: flex; gap: 10px; align-items: baseline; }
+legend .no { font-family: var(--mono); font-size: .85rem; color: var(--wood); }
+.q { display: grid; gap: 8px; min-width: 0; }
+.q > .label { font-weight: 600; }
+.q .help { font-size: .88rem; color: var(--muted); margin-top: -4px; }
+.q .pts { font-family: var(--mono); font-size: .75rem; color: var(--muted); font-weight: 400; margin-left: 6px; white-space: nowrap; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opts.stack { flex-direction: column; }
+.opt { display: flex; gap: 8px; align-items: flex-start; padding: 7px 12px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; min-width: 0; }
+.opt:hover { border-color: var(--accent); }
+.opt input { margin-top: 4px; accent-color: var(--accent); flex: none; }
+.opt:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.field { display: grid; gap: 4px; min-width: 0; }
+.field label { font-size: .88rem; font-weight: 600; }
+input[type="text"], input[type="number"], textarea { font: inherit; width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--bg); color: var(--ink); }
+textarea { min-height: 80px; resize: vertical; }
+
+.panel { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  padding: 20px; display: grid; gap: 16px; }
+.score { display: grid; gap: 4px; }
+.score .big { font-family: var(--display); font-size: 3.2rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.score .big small { font-size: 1.1rem; color: var(--muted); font-weight: 500; }
+.verdict { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border-radius: 999px; font-weight: 700; font-size: .92rem; width: fit-content; }
+.verdict::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+.v-crit { color: var(--crit); background: var(--crit-soft); }
+.v-mid { color: var(--mid); background: var(--mid-soft); }
+.v-ok { color: var(--ok); background: var(--ok-soft); }
+.scale { position: relative; height: 10px; border-radius: 5px; overflow: hidden; display: grid; grid-template-columns: 40fr 35fr 25fr; }
+.scale span:nth-child(1) { background: var(--crit-soft); } .scale span:nth-child(2) { background: var(--mid-soft); } .scale span:nth-child(3) { background: var(--ok-soft); }
+.scale .mark { position: absolute; top: -2px; bottom: -2px; width: 3px; background: var(--ink); border-radius: 2px; transition: left .3s; }
+.scale-labels { display: flex; justify-content: space-between; font-family: var(--mono); font-size: .7rem; color: var(--muted); }
+.bars { display: grid; gap: 10px; }
+.bar { display: grid; gap: 4px; }
+.bar .row { display: flex; justify-content: space-between; gap: 8px; font-size: .9rem; }
+.bar .track { height: 6px; background: var(--accent-soft); border-radius: 3px; overflow: hidden; }
+.bar .fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width .3s; }
+.progress { font-size: .85rem; color: var(--muted); }
+.notes { display: grid; gap: 8px; font-size: .88rem; }
+.note { padding: 8px 10px; border-radius: 8px; background: var(--bg); border-left: 3px solid var(--wood); }
+
+.summary { margin-top: 32px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px; display: grid; gap: 20px; }
+.summary-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.summary h3 { font-size: 1.05rem; margin-bottom: 8px; }
+.summary ol { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; max-width: 80ch; }
+.summary .kpis { display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: center; }
+.steps { display: grid; gap: 10px; }
+.step { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.step .when { font-family: var(--mono); font-size: .85rem; color: var(--wood); }
+@media (max-width: 520px) { .step { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+.copied { font-size: .85rem; color: var(--ok); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">Nařízení (EU) 2023/1115 · EUDR</span>
+    <h1>Připravenost firmy na EUDR</h1>
+    <p>Vstupní dotazník k orientačnímu zhodnocení připravenosti společnosti na požadavky nařízení EU proti odlesňování. Skóre se počítá průběžně, souhrn pro klienta najdete pod dotazníkem.</p>
+    <div class="toolbar">
+      <span class="chip mono" id="deadline"></span>
+      <button type="button" id="btn-new">Nový dotazník</button>
+      <button type="button" id="btn-sample">Načíst ukázku</button>
+    </div>
+  </header>
+
+  <div class="sample" id="sample-banner" hidden>
+    <span><strong>Ukázková data.</strong> Dotazník je vyplněný fiktivní firmou, aby bylo vidět, jak vypadá vyhodnocení.</span>
+    <button type="button" class="primary" id="btn-clear-sample">Začít s prázdným dotazníkem</button>
+  </div>
+
+  <div class="layout">
+    <form id="form" autocomplete="off"></form>
+    <aside class="panel" aria-live="polite">
+      <div class="score">
+        <span class="eyebrow">Skóre připravenosti</span>
+        <div class="big"><span id="total">0</span> <small>/ 100 b.</small></div>
+      </div>
+      <span class="verdict" id="verdict"></span>
+      <div>
+        <div class="scale"><span></span><span></span><span></span><i class="mark" id="mark"></i></div>
+        <div class="scale-labels"><span>0</span><span>40</span><span>75</span><span>100</span></div>
+      </div>
+      <div class="bars" id="bars"></div>
+      <div class="progress" id="progress"></div>
+      <div class="notes" id="notes"></div>
+    </aside>
+  </div>
+
+  <section class="summary" aria-labelledby="sum-title">
+    <div class="summary-head">
+      <div>
+        <span class="eyebrow">Executive summary pro klienta</span>
+        <h2 id="sum-title">Výsledek auditu připravenosti na EUDR</h2>
+      </div>
+      <div class="toolbar">
+        <button type="button" class="primary" id="btn-copy">Kopírovat souhrn</button>
+        <span class="copied" id="copied" hidden>Zkopírováno</span>
+      </div>
+    </div>
+    <div id="summary"></div>
+    <textarea id="copy-fallback" hidden readonly></textarea>
+  </section>
+</div>
+
+<script>
+const SECTIONS = [
+  { no: 1, title: "Základní údaje o společnosti", items: [
+    { type: "fields", fields: [
+      { id: "firma", label: "Název firmy" },
+      { id: "ico", label: "IČO" },
+      { id: "kontakt", label: "Kontakt (odpovědná osoba)" },
+    ]},
+    { id: "cinnost", type: "check", label: "Hlavní předmět činnosti", stack: true, options: [
+      ["les", "Vlastník / správce lesa"],
+      ["pila", "Pila / prvotní zpracovatel dříví"],
+      ["vyrobce", "Výrobce (nábytek, stavební truhlářství, obaly, palety, papír)"],
+      ["obchod", "Obchodník / distribuce"],
+      ["dovoz", "Dovozce ze třetích zemí (mimo EU) / vývozce mimo EU"],
+    ]},
+  ]},
+  { no: 2, title: "Určení role a velikosti podniku", items: [
+    { id: "velikost", type: "radio", label: "Jaká je velikost Vaší společnosti?", help: "Určuje termín, od kdy platí povinnosti.", stack: true, options: [
+      ["velky", "Střední nebo velký podnik (povinnosti od 30. 12. 2026)"],
+      ["maly", "Mikro nebo malý podnik (povinnosti od 30. 6. 2027, zjednodušený režim u navazujících produktů)"],
+    ]},
+    { id: "role", type: "radio", label: "Vystupujete při nákupu/prodeji jako:", stack: true, options: [
+      ["subjekt", "Hospodářský subjekt (uvádíte surovinu/výrobek poprvé na trh EU nebo vyvážíte mimo EU)"],
+      ["obchodnik", "Obchodník (nakupujete a prodáváte výrobky již uvedené na trh EU jiným subjektem)"],
+    ]},
+  ]},
+  { no: 3, title: "Produktové portfolio a dodavatelský řetězec", items: [
+    { id: "priloha", type: "radio", label: "Spadají Vaše nakupované či vyráběné produkty pod Přílohu I EUDR?",
+      help: "Surové dříví, palivové dříví, řezivo, dýhy, dřevěné desky, palety, obaly, nábytek ze dřeva, buničina, papír.", stack: true, options: [
+      ["ano", "Ano"],
+      ["ne", "Ne / výhradně 100% recyklovaný materiál (recyklované produkty jsou z EUDR vyňaty)"],
+      ["nevim", "Nejsme si jisti"],
+    ]},
+    { type: "fields", fields: [{ id: "kody", label: "Celní kódy produktů (KN/HS)", mono: true }] },
+    { id: "puvod", type: "check", label: "Odkud pochází Vaše surovina / produkty?", stack: true, options: [
+      ["cr", "Výhradně z lesů v České republice"],
+      ["eu", "Z jiných členských států EU"],
+      ["tretizeme", "Dovoz ze zemí mimo EU (třetí země)"],
+    ]},
+  ]},
+  { no: 4, title: "Sledovatelnost a geolokalizace původu", items: [
+    { id: "geo", type: "radio", score: true, label: "Disponujete geolokačními údaji o těžebních parcelách pro dodávané dříví?", stack: true, options: [
+      ["ano", "Ano – máme bodové souřadnice / polygony parcel pro všechny dodávky", 15],
+      ["cast", "Částečně – máme data jen od některých dodavatelů", 7],
+      ["ne", "Ne – geolokační údaje zatím nesbíráme", 0],
+    ]},
+    { type: "fields", fields: [
+      { id: "dodavatele", label: "Počet dodavatelů dříví", num: true },
+      { id: "dodavateleGeo", label: "Z toho poskytuje geodata", num: true },
+    ]},
+    { id: "kn", type: "radio", score: true, label: "Umíte generovat GeoJSON a využíváte propojení na katastr nemovitostí (KNID / LPIS)?", options: [
+      ["ano", "Ano", 10], ["ne", "Ne / nevíme, jak data generovat", 0],
+    ]},
+    { id: "sarze", type: "radio", score: true, label: "Dokážete ke každé šarži/dodávce přiřadit přesné období těžby a druh dřeviny?", options: [
+      ["ano", "Ano", 10], ["cast", "Částečně", 5], ["ne", "Ne", 0],
+    ]},
+  ]},
+  { no: 5, title: "Dokládání legality a hodnocení rizik", items: [
+    { id: "legal", type: "radio", score: true, label: "Máte k dispozici doklady prokazující legálnost těžby v místě původu?",
+      help: "Těžební povolení, schválený LHP/LHO, doklady o vlastnictví či užívacím právu.", options: [
+      ["ano", "Ano", 15], ["cast", "Částečně", 8], ["ne", "Ne", 0],
+    ]},
+    { id: "dolozky", type: "radio", score: true, label: "Obsahují Vaše dodavatelské smlouvy EUDR doložky (povinnost předávat geodata a doklady)?", options: [
+      ["ano", "Ano", 10], ["ne", "Ne", 0],
+    ]},
+    { id: "dds", type: "radio", score: true, label: "Máte vypracovanou písemnou směrnici pro systém náležité péče (DDS)?", stack: true, options: [
+      ["ano", "Ano – písemně zdokumentováno a ročně aktualizováno", 15],
+      ["ne", "Ne – systém nemáme nastaven", 0],
+    ]},
+    { id: "rizika", type: "radio", score: true, label: "Máte nastavený postup pro posouzení a zmírňování rizika odlesňování?", options: [
+      ["ano", "Ano", 10], ["ne", "Ne", 0],
+    ]},
+    { id: "cert", type: "check", label: "Jsou Vaše produkty nebo lesní majetky certifikovány?",
+      help: "Certifikáty usnadňují dokládání podkladů, ale samy o sobě nezbavují povinností podle EUDR.", options: [
+      ["fsc", "FSC"], ["pefc", "PEFC"], ["zadna", "Bez certifikace"],
+    ]},
+  ]},
+  { no: 6, title: "IT systémy a reportování", items: [
+    { id: "sepo", type: "radio", score: true, label: "Jste připraveni na registraci a podávání prohlášení o náležité péči do informačního systému EU a národní aplikace SEPO?", options: [
+      ["ano", "Ano", 10], ["ne", "Ne / potřebujeme asistenci", 0],
+    ]},
+    { id: "archiv", type: "radio", score: true, label: "Máte nastaven proces archivace mapových podkladů, certifikátů a prohlášení po dobu 5 let?", options: [
+      ["ano", "Ano", 5], ["ne", "Ne", 0],
+    ]},
+  ]},
+  { no: 7, title: "Poznámka konzultanta", items: [
+    { type: "fields", fields: [{ id: "poznamka", label: "Doplňující zjištění (objeví se v souhrnu)", area: true }] },
+  ]},
+];
+
+const CATEGORIES = [
+  { name: "Geolokalizace a sledovatelnost", items: ["geo", "kn", "sarze"], max: 35 },
+  { name: "Dokládání legality těžby", items: ["legal", "dolozky"], max: 25 },
+  { name: "Systém náležité péče (DDS)", items: ["dds", "rizika"], max: 25 },
+  { name: "IT systémy, registrace a archivace", items: ["sepo", "archiv"], max: 15 },
+];
+
+const GAPS = {
+  geo: d => {
+    const n = +d.dodavatele, m = +d.dodavateleGeo;
+    if (d.geo === "cast" && n > 0 && m >= 0 && m < n)
+      return `Geolokace parcel: Firma odebírá dříví od ${n} dodavatelů, ale ${n - m} z nich zatím neposkytuje geolokační polygony parcel.`;
+    return d.geo === "cast"
+      ? "Geolokace parcel: Geolokační údaje (souřadnice / polygony) firma má jen od části dodavatelů."
+      : "Geolokace parcel: Firma zatím nesbírá geolokační údaje (souřadnice / polygony) o těžebních parcelách.";
+  },
+  kn: () => "Generování geodat: Chybí propojení na katastr nemovitostí (KNID / LPIS) a postup pro export geolokace ve formátu GeoJSON.",
+  sarze: d => d.sarze === "cast"
+    ? "Evidence šarží: Druh dřeviny a období těžby lze doložit jen u části dodávek."
+    : "Evidence šarží: K dodávkám nelze doložit druh dřeviny a období těžby.",
+  legal: d => d.legal === "cast"
+    ? "Doklady o legalitě: Doklady o legálnosti těžby (těžební povolení, LHP/LHO, vlastnická práva) jsou neúplné."
+    : "Doklady o legalitě: Chybí doklady prokazující legálnost těžby v místě původu.",
+  dolozky: () => "Smluvní ošetření: Ve stávajících kupních smlouvách chybí právní závazek dodavatelů předávat geodata a doklady.",
+  dds: () => "Směrnice DDS: Firma nemá vypracovanou vnitřní směrnici pro systém náležité péče.",
+  rizika: () => "Hodnocení rizik: Není nastaven postup posouzení a zmírnění rizika odlesňování a nelegální těžby.",
+  sepo: () => "Registrace a podávání: Firma není připravena podávat prohlášení o náležité péči do informačního systému EU a aplikace SEPO.",
+  archiv: () => "Archivace: Není zajištěno uchovávání map, certifikátů a prohlášení po dobu 5 let.",
+};
+
+const STEPS = [
+  { when: "1.–2. měsíc", items: ["dolozky", "geo", "kn", "sarze"], text: d => {
+    const parts = [];
+    if (lost(d, "dolozky") || lost(d, "geo")) parts.push("příprava vzorových dodatků ke smlouvám a komunikace s dodavateli");
+    if (lost(d, "kn") || lost(d, "geo")) parts.push("nastavení sběru geolokací a exportu do GeoJSON (KNID / LPIS)");
+    if (lost(d, "sarze")) parts.push("zavedení evidence dřevin a období těžby po šaržích");
+    return parts; } },
+  { when: "2.–3. měsíc", items: ["dds", "rizika", "legal"], text: d => {
+    const parts = [];
+    if (lost(d, "dds") || lost(d, "rizika")) parts.push("vypracování směrnice DDS na míru včetně postupu hodnocení a zmírňování rizik");
+    if (lost(d, "legal")) parts.push("doplnění dokladů o legálnosti těžby od dodavatelů");
+    return parts; } },
+  { when: "4. měsíc", items: ["sepo", "archiv"], text: d => {
+    const parts = [];
+    if (lost(d, "sepo")) parts.push("zaškolení do podávání prohlášení v informačním systému EU a SEPO");
+    if (lost(d, "archiv")) parts.push("nastavení pětileté archivace dat a map");
+    return parts; } },
+];
+
+const SAMPLE = {
+  firma: "Pila Horní Vltava s.r.o. (ukázka)", ico: "00000000", kontakt: "Jana Nováková, vedoucí nákupu",
+  cinnost: ["pila"], velikost: "velky", role: "subjekt", priloha: "ano", kody: "4403, 4407, 4415",
+  puvod: ["cr", "eu"], geo: "cast", dodavatele: "12", dodavateleGeo: "6", kn: "ano", sarze: "cast",
+  legal: "ano", dolozky: "ne", dds: "ne", rizika: "ne", cert: ["pefc"], sepo: "ne", archiv: "ano", poznamka: "",
+};
+
+const STORE_KEY = "eudr-dotaznik-v1";
+const form = document.getElementById("form");
+const optionPoints = {};
+let isSample = false;
+
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function buildForm() {
+  form.innerHTML = SECTIONS.map(sec => `
+    <fieldset>
+      <legend><h2><span class="no">${String(sec.no).padStart(2, "0")}</span>${esc(sec.title)}</h2></legend>
+      ${sec.items.map(renderItem).join("")}
+    </fieldset>`).join("");
+}
+
+function renderItem(it) {
+  if (it.type === "fields") {
+    return `<div class="fields">${it.fields.map(f => `
+      <div class="field"${f.area ? ' style="grid-column: 1 / -1"' : ""}>
+        <label for="f-${f.id}">${esc(f.label)}</label>
+        ${f.area ? `<textarea id="f-${f.id}" name="${f.id}"></textarea>`
+          : `<input id="f-${f.id}" name="${f.id}" type="${f.num ? "number" : "text"}"${f.num ? ' min="0" inputmode="numeric"' : ""}${f.mono ? ' class="mono"' : ""}>`}
+      </div>`).join("")}</div>`;
+  }
+  if (it.score) optionPoints[it.id] = Object.fromEntries(it.options.map(o => [o[0], o[2]]));
+  const max = it.score ? Math.max(...it.options.map(o => o[2])) : 0;
+  return `<div class="q" role="group" aria-labelledby="l-${it.id}">
+    <div class="label" id="l-${it.id}">${esc(it.label)}${it.score ? `<span class="pts">max. ${max} b.</span>` : ""}</div>
+    ${it.help ? `<div class="help">${esc(it.help)}</div>` : ""}
+    <div class="opts${it.stack ? " stack" : ""}">
+      ${it.options.map(o => `<label class="opt"><input type="${it.type === "check" ? "checkbox" : "radio"}" id="f-${it.id}-${o[0]}" name="${it.id}" value="${o[0]}"><span>${esc(o[1])}</span></label>`).join("")}
+    </div>
+  </div>`;
+}
+
+function readForm() {
+  const d = {};
+  for (const el of form.elements) {
+    if (!el.name) continue;
+    if (el.type === "checkbox") { (d[el.name] ||= []); if (el.checked) d[el.name].push(el.value); }
+    else if (el.type === "radio") { if (el.checked) d[el.name] = el.value; }
+    else d[el.name] = el.value.trim();
+  }
+  return d;
+}
+
+function writeForm(d) {
+  for (const el of form.elements) {
+    if (!el.name) continue;
+    const v = d[el.name];
+    if (el.type === "checkbox") el.checked = Array.isArray(v) && v.includes(el.value);
+    else if (el.type === "radio") el.checked = v === el.value;
+    else el.value = v ?? "";
+  }
+}
+
+const pts = (d, id) => (d[id] && optionPoints[id] ? optionPoints[id][d[id]] : 0);
+const maxPts = id => Math.max(...Object.values(optionPoints[id]));
+const lost = (d, id) => pts(d, id) < maxPts(id);
+
+function verdictOf(total) {
+  if (total <= 40) return { cls: "v-crit", label: "Kritické riziko", icon: "🔴", text: "Okamžitá nutnost zásahu (hrozí zákaz prodeje / pokuty)." };
+  if (total <= 75) return { cls: "v-mid", label: "Střední riziko", icon: "🟡", text: "Částečná připravenost (klíčové mezery v geolokaci či DDS)." };
+  return { cls: "v-ok", label: "Vysoká připravenost", icon: "🟢", text: "Nízké riziko (nutné jen drobné úpravy a certifikace)." };
+}
+
+function daysTo(iso) {
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  return Math.round((new Date(iso + "T00:00:00") - now) / 86400000);
+}
+function deadlineFor(d) {
+  return d.velikost === "maly" ? { iso: "2027-06-30", label: "30. 6. 2027" } : { iso: "2026-12-30", label: "30. 12. 2026" };
+}
+
+function contextNotes(d) {
+  const notes = [];
+  if (d.priloha === "ne") notes.push("Produkty mimo Přílohu I nebo 100% recyklát: EUDR se na firmu pravděpodobně nevztahuje. Doporučujeme ověřit celní kódy.");
+  if (d.priloha === "nevim") notes.push("Zařazení produktů pod Přílohu I není jasné. Prvním krokem je kontrola celních kódů.");
+  if ((d.puvod || []).includes("tretizeme") || (d.cinnost || []).includes("dovoz")) notes.push("Dovoz ze třetích zemí: rizikovost závisí na kategorii země původu podle srovnávacího hodnocení EU. U zemí se standardním a vysokým rizikem je potřeba důkladnější posouzení.");
+  if (d.role === "obchodnik" && d.velikost === "maly") notes.push("Malý obchodník: pro navazující produkty lze využít zjednodušený režim, je ale nutné uchovávat údaje o dodavatelích a odběratelích.");
+  if ((d.cert || []).some(c => c === "fsc" || c === "pefc")) notes.push("Certifikace FSC/PEFC pomůže s doklady, ale nenahrazuje vlastní systém náležité péče ani geolokaci.");
+  return notes;
+}
+
+function compute(d) {
+  const cats = CATEGORIES.map(c => ({ ...c, score: c.items.reduce((s, id) => s + pts(d, id), 0) }));
+  const total = cats.reduce((s, c) => s + c.score, 0);
+  const scored = Object.keys(optionPoints);
+  const answered = scored.filter(id => d[id]).length;
+  const gaps = scored.filter(id => d[id] && lost(d, id))
+    .sort((a, b) => (maxPts(b) - pts(d, b)) - (maxPts(a) - pts(d, a)))
+    .map(id => GAPS[id](d));
+  const unanswered = scored.filter(id => !d[id]);
+  const steps = STEPS.map(s => ({ when: s.when, parts: s.text(d).filter((p, i, a) => a.indexOf(p) === i) })).filter(s => s.parts.length);
+  return { cats, total, answered, count: scored.length, gaps, unanswered, steps, verdict: verdictOf(total) };
+}
+
+function render() {
+  const d = readForm();
+  const r = compute(d);
+  const dl = deadlineFor(d);
+  const days = daysTo(dl.iso);
+
+  document.getElementById("deadline").textContent = d.velikost
+    ? (days >= 0 ? `Povinnosti od ${dl.label} · zbývá ${days} dní` : `Povinnosti platí od ${dl.label}`)
+    : `Velké a střední firmy od 30. 12. 2026 · mikro a malé od 30. 6. 2027`;
+
+  document.getElementById("total").textContent = r.total;
+  const v = document.getElementById("verdict");
+  v.className = "verdict " + r.verdict.cls; v.textContent = r.verdict.label;
+  document.getElementById("mark").style.left = `calc(${r.total}% - 1.5px)`;
+  document.getElementById("bars").innerHTML = r.cats.map(c => `
+    <div class="bar"><div class="row"><span>${esc(c.name)}</span><span class="mono">${c.score} / ${c.max}</span></div>
+    <div class="track"><div class="fill" style="width:${(c.score / c.max) * 100}%"></div></div></div>`).join("");
+  document.getElementById("progress").textContent = `Zodpovězeno ${r.answered} z ${r.count} hodnocených otázek` +
+    (r.answered < r.count ? " · neodpovězené otázky se počítají za 0 b." : "");
+  document.getElementById("notes").innerHTML = contextNotes(d).map(n => `<div class="note">${esc(n)}</div>`).join("");
+
+  const firm = d.firma || "[Název firmy]";
+  const stepsHtml = r.steps.length
+    ? r.steps.map((s, i) => `<div class="step"><span class="when">Krok ${i + 1} · ${s.when}</span><span>${esc(cap(s.parts.join("; ")))}.</span></div>`).join("")
+    : `<div class="step"><span class="when">Krok 1</span><span>Kontrolní revize systému a dokumentace před ${dl.label}.</span></div>`;
+  document.getElementById("summary").innerHTML = `
+    <div style="display:grid;gap:20px">
+      <div class="kpis">
+        <span>Společnost: <strong>${esc(firm)}</strong>${d.ico ? ` <span class="mono muted">IČO ${esc(d.ico)}</span>` : ""}</span>
+        <span>Celkové skóre: <strong class="mono">${r.total} / 100 b.</strong></span>
+        <span class="verdict ${r.verdict.cls}">${r.verdict.label}</span>
+      </div>
+      <p style="margin:0" class="muted">${esc(r.verdict.text)}</p>
+      <div>
+        <h3>Klíčová zranitelná místa (gap analýza)</h3>
+        ${r.gaps.length ? `<ol>${r.gaps.map(g => `<li>${fmtGap(g)}</li>`).join("")}</ol>` : `<p class="muted" style="margin:0">Žádné podstatné mezery nebyly zjištěny.</p>`}
+        ${r.unanswered.length ? `<p class="muted" style="margin:10px 0 0">Bez odpovědi: ${r.unanswered.length} ${r.unanswered.length === 1 ? "otázka" : r.unanswered.length < 5 ? "otázky" : "otázek"}. Skóre může být podhodnocené.</p>` : ""}
+      </div>
+      <div>
+        <h3>Doporučený harmonogram konzultačních kroků</h3>
+        <div class="steps">${stepsHtml}</div>
+      </div>
+      ${d.poznamka ? `<div><h3>Poznámka konzultanta</h3><p style="margin:0;white-space:pre-wrap">${esc(d.poznamka)}</p></div>` : ""}
+    </div>`;
+  return { d, r, dl };
+}
+
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+function fmtGap(g) { const i = g.indexOf(": "); return i > 0 ? `<strong>${esc(g.slice(0, i))}:</strong> ${esc(g.slice(i + 2))}` : esc(g); }
+
+function summaryText() {
+  const { d, r, dl } = render();
+  const lines = [
+    `Výsledek auditu připravenosti na EUDR pro společnost ${d.firma || "[Název firmy]"}`,
+    "",
+    `Celkové skóre připravenosti: ${r.total} / 100 bodů (${r.verdict.icon} ${r.verdict.label})`,
+    ...r.cats.map(c => `  – ${c.name}: ${c.score} / ${c.max} b.`),
+    "",
+    "Klíčová odhalená zranitelná místa (gap analýza):",
+    ...(r.gaps.length ? r.gaps.map((g, i) => `  ${i + 1}. ${g}`) : ["  Žádné podstatné mezery nebyly zjištěny."]),
+    "",
+    "Doporučený harmonogram konzultačních kroků:",
+    ...(r.steps.length ? r.steps.map((s, i) => `  Krok ${i + 1} (${s.when}): ${cap(s.parts.join("; "))}.`)
+      : [`  Krok 1: Kontrolní revize systému a dokumentace před ${dl.label}.`]),
+  ];
+  if (d.poznamka) lines.push("", "Poznámka konzultanta:", d.poznamka);
+  return lines.join("\n");
+}
+
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify({ sample: isSample, data: readForm() })); } catch (e) {}
+}
+function setSample(on) { isSample = on; document.getElementById("sample-banner").hidden = !on; }
+function load(data, sample) { writeForm(data); setSample(sample); render(); save(); }
+function clearAll() { load({}, false); window.scrollTo({ top: 0, behavior: "smooth" }); }
+
+buildForm();
+form.addEventListener("input", () => { if (isSample) setSample(false); render(); save(); });
+form.addEventListener("submit", e => e.preventDefault());
+document.getElementById("btn-sample").addEventListener("click", () => load(SAMPLE, true));
+document.getElementById("btn-clear-sample").addEventListener("click", clearAll);
+
+const btnNew = document.getElementById("btn-new");
+let armed = null;
+btnNew.addEventListener("click", () => {
+  if (armed) { clearTimeout(armed); armed = null; btnNew.textContent = "Nový dotazník"; clearAll(); return; }
+  btnNew.textContent = "Klikněte znovu pro vymazání odpovědí";
+  armed = setTimeout(() => { armed = null; btnNew.textContent = "Nový dotazník"; }, 3500);
+});
+
+document.getElementById("btn-copy").addEventListener("click", () => {
+  const text = summaryText();
+  const ok = () => { const c = document.getElementById("copied"); c.hidden = false; setTimeout(() => c.hidden = true, 2000); };
+  const fallback = () => { const t = document.getElementById("copy-fallback"); t.hidden = false; t.value = text; t.style.minHeight = "260px"; t.focus(); t.select(); };
+  try { navigator.clipboard.writeText(text).then(ok, fallback); } catch (e) { fallback(); }
+});
+
+let stored = null;
+try { stored = JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) {}
+if (stored && stored.data) load(stored.data, !!stored.sample); else load(SAMPLE, true);
+</script>
+</body>
+</html>
